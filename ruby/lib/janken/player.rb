@@ -33,6 +33,24 @@ module Janken
       @name
     end
 
+    class Name
+      class InvalidPlayerNameError < StandardError; end
+
+      def initialize(value)
+        raise InvalidPlayerNameError.new("player name must not be empty but actual is empty") if value.empty?
+
+        @value = value
+      end
+
+      def ==(other)
+        value == other.value
+      end
+
+      protected def value
+        @value
+      end
+    end
+
     class SelectedHand
       attr_reader :hand, :owner
 
@@ -52,15 +70,15 @@ module Janken
     end
 
     class WinCount
-      class InvalidCountNumber < StandardError; end
+      class InvalidCountNumberError < StandardError; end
 
       def self.zero
         @zero ||= new(0)
       end
 
       def initialize(value)
-        raise InvalidCountNumber.new("win count must be >= 0, but actual is #{value}") unless value >= 0
-        raise InvalidCountNumber.new("win count must be integer, but actual is #{value}") unless value.is_a? Integer
+        raise InvalidCountNumberError.new("win count must be >= 0, but actual is #{value}") unless value >= 0
+        raise InvalidCountNumberError.new("win count must be integer, but actual is #{value}") unless value.is_a? Integer
 
         @value = value
       end

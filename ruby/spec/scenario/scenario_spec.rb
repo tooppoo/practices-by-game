@@ -15,19 +15,19 @@ describe 'Janken Scenario' do
   context 'player1~3 exists, player1 show hand paper, stone, scissors, player2 show only stone, player3 show only scissors' do
     let(:player1) {
       Janken::Player.new(
-        name: "Ulike Norman Owen",
+        name: Janken::Player::Name.new("Ulike Norman Owen"),
         strategy: Janken::Strategy::Order.by([Janken::Hand.paper, Janken::Hand.stone, Janken::Hand.scissors])
       )
     }
     let(:player2) {
       Janken::Player.new(
-        name: "Una Nancy Owen",
+        name: Janken::Player::Name.new("Una Nancy Owen"),
         strategy: Janken::Strategy::Only.stone
       )
     }
     let(:player3) {
       Janken::Player.new(
-        name: "Agatha Christie",
+        name: Janken::Player::Name.new("Agatha Christie"),
         strategy: Janken::Strategy::Only.scissors
       )
     }
@@ -56,19 +56,19 @@ describe 'Janken Scenario' do
   context 'player1~3 exists, player1 & player2 show only stone, player3 show only scissors' do
     let(:player1) {
       Janken::Player.new(
-        name: "Ulike Norman Owen",
+        name: Janken::Player::Name.new("Ulike Norman Owen"),
         strategy: Janken::Strategy::Only.stone
       )
     }
     let(:player2) {
       Janken::Player.new(
-        name: "Una Nancy Owen",
+        name: Janken::Player::Name.new("Una Nancy Owen"),
         strategy: Janken::Strategy::Only.stone
       )
     }
     let(:player3) {
       Janken::Player.new(
-        name: "Agatha Christie",
+        name: Janken::Player::Name.new("Agatha Christie"),
         strategy: Janken::Strategy::Only.scissors
       )
     }
@@ -97,19 +97,19 @@ describe 'Janken Scenario' do
   context 'player1~3 exists, all players show only stone' do
     let(:player1) {
       Janken::Player.new(
-        name: "Ulike Norman Owen",
+        name: Janken::Player::Name.new("Ulike Norman Owen"),
         strategy: Janken::Strategy::Only.stone
       )
     }
     let(:player2) {
       Janken::Player.new(
-        name: "Una Nancy Owen",
+        name: Janken::Player::Name.new("Una Nancy Owen"),
         strategy: Janken::Strategy::Only.stone
       )
     }
     let(:player3) {
       Janken::Player.new(
-        name: "Agatha Christie",
+        name: Janken::Player::Name.new("Agatha Christie"),
         strategy: Janken::Strategy::Only.stone
       )
     }
