@@ -64,7 +64,9 @@ module Janken
           @each_results = each_results
 
           sum = whole_players.inject({ most_win_count: 0, winners: [] }) do |xs, player|
-            if xs[:most_win_count] == player.win_count
+            if player.win_count == 0
+              xs
+            elsif xs[:most_win_count] == player.win_count
               xs.merge({ winners: xs[:winners] + [player] })
             elsif xs[:most_win_count] < player.win_count
               { most_win_count: player.win_count, winners: [player] }

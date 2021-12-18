@@ -93,4 +93,45 @@ describe 'Janken Scenario' do
       end
     end
   end
+
+  context 'player1~3 exists, all players show only stone' do
+    let(:player1) {
+      Janken::Player.new(
+        name: "Ulike Norman Owen",
+        strategy: Janken::Strategy::Only.stone
+      )
+    }
+    let(:player2) {
+      Janken::Player.new(
+        name: "Una Nancy Owen",
+        strategy: Janken::Strategy::Only.stone
+      )
+    }
+    let(:player3) {
+      Janken::Player.new(
+        name: "Agatha Christie",
+        strategy: Janken::Strategy::Only.stone
+      )
+    }
+
+    context 'play 3times' do
+      let(:times) { 3 }
+
+      it 'winners not exist' do
+        result = game.play
+
+        expect(result.winners).to match_array []
+      end
+      it 'losers not exist' do
+        result = game.play
+
+        expect(result.losers).to match_array []
+      end
+      it 'is draw game' do
+        result = game.play
+
+        expect(result.is_draw?).to eq true
+      end
+    end
+  end
 end
