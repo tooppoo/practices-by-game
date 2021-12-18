@@ -33,27 +33,15 @@ module Janken
         private def initialize(selected_hands)
           @selected_hands = selected_hands
 
-          return if kinds_of_selected_hands.length != 2
-
-          hand_of_winner = case kinds_of_selected_hands.sort
-                           when [Janken::Hand.stone, Janken::Hand.scissors].sort
-                             Janken::Hand.stone
-                           when [Janken::Hand.stone, Janken::Hand.paper].sort
-                             Janken::Hand.paper
-                           else
-                             Janken::Hand.scissors
-                           end
-
-          @selected_hands.select { |h| h == hand_of_winner }
-                         .each { |h| h.owner.notify_win }
+          selected_hand_list = Janken::Hand::List.at_least_one(selected_hands.map(&:hand))
+          selected_hand_list.maybe_winner.map do |hand_of_winner|
+            @selected_hands.select { |h| h == hand_of_winner }
+                           .each { |h| h.owner.notify_win }
+          end
         end
 
         def players
           @selected_hands.map(&:owner).uniq
-        end
-
-        private def kinds_of_selected_hands
-          @selected_hands.map(&:hand).uniq
         end
       end
 
