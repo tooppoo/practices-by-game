@@ -18,6 +18,13 @@ module Janken
       result_by_games = (1..@times).map do
         selected_hands = @players.map(&:select_hand)
 
+        selected_hand_list = Janken::Hand::List.at_least_one(selected_hands.map(&:hand))
+        selected_hand_list.maybe_winner.map do |hand_of_winner|
+          selected_hands
+            .select { |h| h == hand_of_winner }
+            .each { |h| h.owner.notify_win }
+        end
+
         Result::Each.create_for(selected_hands)
       end
 
@@ -32,12 +39,6 @@ module Janken
 
         private def initialize(selected_hands)
           @selected_hands = selected_hands
-
-          selected_hand_list = Janken::Hand::List.at_least_one(selected_hands.map(&:hand))
-          selected_hand_list.maybe_winner.map do |hand_of_winner|
-            @selected_hands.select { |h| h == hand_of_winner }
-                           .each { |h| h.owner.notify_win }
-          end
         end
 
         def players
@@ -46,43 +47,47 @@ module Janken
       end
 
       class Total
-        attr_reader :winners
+        attr_reader :winners, :losers
 
         def initialize(each_results)
-          @each_results = each_results
+          init = {
+            most_win_count: Janken::Player::WinCount.zero,
+            winners: [],
+            losers: [],
+          }
 
-          init = { most_win_count: Janken::Player::WinCount.zero, winners: [] }
-          sum = whole_players.inject(init) do |xs, player|
+          players = whole_players(each_results)
+
+          sum = players.inject(init) do |xs, player|
             if not player.has_won?
-              xs
+              xs.merge({ losers: xs[:losers] + [player] })
             elsif xs[:most_win_count] == player.win_count
               xs.merge({ winners: xs[:winners] + [player] })
             elsif xs[:most_win_count] < player.win_count
-              { most_win_count: player.win_count, winners: [player] }
+              {
+                most_win_count: player.win_count,
+                winners: [player],
+                losers: xs[:winners],
+              }
             else
-              xs
+              xs.merge({ losers: xs[:losers] + [player] })
             end
           end
 
           @winners = sum[:winners]
-        end
-
-        def losers
-          @losers ||= if is_draw?
-                        []
-                      else
-                        whole_players.select do |player|
-                          not winners.include?(player)
-                        end
-                      end
+          @losers = if sum[:losers].length == players.length
+            []
+          else
+            sum[:losers]
+          end
         end
 
         def is_draw?
-          winners.empty?
+          winners.empty? && losers.empty?
         end
 
-        private def whole_players
-          @whole_players ||= @each_results.map(&:players).flatten.uniq
+        private def whole_players(results)
+          results.map(&:players).flatten.uniq
         end
       end
     end

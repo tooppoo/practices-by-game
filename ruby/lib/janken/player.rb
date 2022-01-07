@@ -29,6 +29,10 @@ module Janken
       name == other.name
     end
 
+    def inspect
+      [name, @win_count].inspect
+    end
+
     protected def name
       @name
     end
@@ -44,6 +48,10 @@ module Janken
 
       def ==(other)
         value == other.value
+      end
+
+      def inspect
+        @value
       end
 
       protected def value
@@ -66,6 +74,10 @@ module Janken
         else
           self == hand
         end
+      end
+
+      def inspect
+        [@owner, @hand].inspect
       end
     end
 
@@ -103,6 +115,10 @@ module Janken
 
       def to_i
         value
+      end
+
+      def inspect
+        value.to_s
       end
 
       protected def value
