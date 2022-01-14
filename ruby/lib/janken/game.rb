@@ -47,7 +47,7 @@ module Janken
       end
 
       class Total
-        attr_reader :winners, :losers
+        attr_reader :winners
 
         def initialize(each_results)
           init = {
@@ -56,9 +56,9 @@ module Janken
             losers: [],
           }
 
-          players = whole_players(each_results)
+          @whole_players = whole_players(each_results)
 
-          sum = players.inject(init) do |xs, player|
+          sum = @whole_players.inject(init) do |xs, player|
             if not player.has_won?
               xs.merge({ losers: xs[:losers] + [player] })
             elsif xs[:most_win_count] == player.win_count
@@ -75,10 +75,14 @@ module Janken
           end
 
           @winners = sum[:winners]
-          @losers = if sum[:losers].length == players.length
+          @losers = sum[:losers]
+        end
+
+        def losers
+          if @losers.length == @whole_players.length
             []
           else
-            sum[:losers]
+            @losers
           end
         end
 
