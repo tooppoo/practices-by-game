@@ -3,7 +3,7 @@
 module OldMaid
   module Card
     class NumberCard
-      protected attr_reader :number
+      attr_reader :number
 
       def initialize(number)
         raise ArgumentError.new("card number must be integer") unless number.integer?

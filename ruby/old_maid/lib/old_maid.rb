@@ -2,5 +2,6 @@
 
 module OldMaid
   require_relative './old_maid/card'
+  require_relative './old_maid/player'
 end
 
