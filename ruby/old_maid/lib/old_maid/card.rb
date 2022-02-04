@@ -6,6 +6,9 @@ module OldMaid
       protected attr_reader :number
 
       def initialize(number)
+        raise ArgumentError.new("card number must be integer") unless number.integer?
+        raise ArgumentError.new("card number must be 1 <= x <= 13") unless (1..13).include?(number)
+
         @number = number
       end
 

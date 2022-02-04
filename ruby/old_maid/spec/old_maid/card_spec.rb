@@ -1,10 +1,44 @@
 # frozen_string_literal: true
 
 require 'rspec'
+require 'rspec-parameterized'
 require_relative '../../lib/old_maid'
 
 RSpec.describe 'Card' do
-  RSpec.describe 'Deck' do
+  describe 'NumberCard' do
+    context 'allowed numbers' do
+      where(:card_number) do
+        [
+          [1],
+          [5],
+          [13],
+        ]
+      end
+
+      with_them do
+        it "should be allowed" do
+          expect { OldMaid::Card::NumberCard.new(card_number) }.not_to raise_error
+        end
+      end
+    end
+
+    context 'disallowed numbers' do
+      where(:case_name, :card_number) do
+        [
+          ['card number must be integer', 1.0],
+          ['card number must be >= 1', 0],
+          ['card number must be <= 13', 14],
+        ]
+      end
+
+      with_them do
+        it "should not be allowed" do
+          expect { OldMaid::Card::NumberCard.new(card_number) }.to raise_error ArgumentError
+        end
+      end
+    end
+  end
+  describe 'Deck' do
     context 'open new pack' do
       it 'should contains 53 cards' do
         sut = OldMaid::Card::Deck.new_pack
