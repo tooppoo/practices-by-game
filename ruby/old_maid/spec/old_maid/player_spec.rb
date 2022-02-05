@@ -52,15 +52,37 @@ RSpec.describe 'Player' do
   end
 
   context 'behave as drawer' do
-    it 'can accept a card' do
-      preparing = OldMaid::Player.prepare(name: 'test')
-      player = preparing.get_ready
-      drawer = player.as_receiver
+    describe 'draw a card' do
+      context 'the player not has yet' do
+        it 'can accept a card and keep all cards in hand' do
+          preparing = OldMaid::Player.prepare(name: 'test')
+          preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
-      sut = drawer.accept OldMaid::Card::NumberCard.new(3)
+          player = preparing.get_ready
+          drawer = player.as_receiver
 
-      expect(sut.rest_cards).to eq 1
+          sut = drawer.accept OldMaid::Card::NumberCard.new(3)
+
+          expect(sut.rest_cards).to eq 2
+        end
+      end
+      context 'the player has already' do
+        it 'can accept a card and dump same cards' do
+          preparing = OldMaid::Player.prepare(name: 'test')
+          preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+          preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
+          preparing = preparing.accept OldMaid::Card::NumberCard.new(3)
+
+          player = preparing.get_ready
+          drawer = player.as_receiver
+
+          sut = drawer.accept OldMaid::Card::NumberCard.new(3)
+
+          expect(sut.rest_cards).to eq 2
+        end
+      end
     end
+
     it 'can not accept a card twice' do
       preparing = OldMaid::Player.prepare(name: 'test')
       player = preparing.get_ready

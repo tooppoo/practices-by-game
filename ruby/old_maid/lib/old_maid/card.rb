@@ -15,11 +15,19 @@ module OldMaid
       def ==(other)
         number == other.number
       end
+
+      def to_sym
+        number.to_s.to_sym
+      end
     end
     class Joker
       require 'singleton'
 
       include Singleton
+
+      def to_sym
+        :joker
+      end
     end
 
     class Deck

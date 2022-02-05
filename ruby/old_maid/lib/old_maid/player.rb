@@ -3,7 +3,7 @@
 module OldMaid
   class Player
     def self.prepare(name:)
-      new(name: name, cards: []).tap do |player|
+      new(name: name, cards: {}).tap do |player|
         OldMaid::Player::State::Preparing.apply player
       end
     end
@@ -49,7 +49,7 @@ module OldMaid
 
         def accept(card)
           transit_to Preparing do
-            cards << card
+            cards[card.to_sym] = card
           end
         end
 
@@ -73,7 +73,11 @@ module OldMaid
 
         def accept(card)
           transit_to Drawn do
-            cards << card
+            if cards.include?(card.to_sym)
+              cards.delete card.to_sym
+            else
+              cards[card.to_sym] = card
+            end
           end
         end
       end
@@ -83,11 +87,9 @@ module OldMaid
         TupleProvide = Struct.new(:card, :player)
 
         def provide(randomizer = Random.new)
-          index = randomizer.rand(0...rest_cards)
-
-          drawn = cards[index]
+          drawn = cards.values.sample(random: randomizer)
           player = transit_to(Drawing) do
-            cards.reject! { |card| card == drawn }
+            cards.reject! { |_, card| card == drawn }
           end
 
           TupleProvide.new(drawn, player)
