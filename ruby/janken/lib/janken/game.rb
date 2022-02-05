@@ -26,55 +26,57 @@ module Janken
         end
       end
 
-      Result::Total.new(players)
+      Result::Builder.new(players: players).build
     end
 
     module Result
-      class Total
-        attr_reader :winners
+      class Builder
+        private attr_reader :players
 
-        def initialize(players)
-          init = {
-            most_win_count: Janken::Player::WinCount.zero,
-            winners: [],
-            losers: [],
-          }
+        def initialize(players:)
+          @players = players
 
-          sum = players.inject(init) do |xs, player|
-            if not player.has_won?
-              xs.merge({ losers: xs[:losers] + [player] })
-            elsif xs[:most_win_count] == player.win_count
-              xs.merge({ winners: xs[:winners] + [player] })
-            elsif xs[:most_win_count] < player.win_count
-              {
-                most_win_count: player.win_count,
-                winners: [player],
-                losers: xs[:winners],
-              }
+          @max_win_count = Janken::Player::WinCount.new(1)
+          @winners = []
+          @losers = []
+        end
+
+        def build
+          players.each do |player|
+            if @max_win_count == player.win_count
+              @winners << player
+            elsif @max_win_count < player.win_count
+              @max_win_count = player.win_count
+              @losers = @winners
+              @winners = [player]
             else
-              xs.merge({ losers: xs[:losers] + [player] })
+              @losers << player
             end
           end
 
-          @winners = sum[:winners]
-          @losers = sum[:losers]
-          @whole_players = players
-        end
-
-        def losers
-          if @losers.length == @whole_players.length
-            []
+          if @losers.length == players.length || @winners.length == players.length
+            Draw.new
           else
-            @losers
+            WinnerExist.new(@winners, @losers)
           end
         end
+      end
 
+      WinnerExist = Struct.new(:winners, :losers) do
         def draw?
-          winners.empty? && losers.empty?
+          false
         end
+      end
 
-        private def whole_players(results)
-          results.map(&:players).flatten.uniq
+      class Draw
+        def winners
+          []
+        end
+        def losers
+          []
+        end
+        def draw?
+          true
         end
       end
     end
