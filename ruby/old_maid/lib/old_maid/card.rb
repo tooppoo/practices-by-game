@@ -56,7 +56,7 @@ module OldMaid
       end
 
       def to_a
-        cards
+        cards.dup.freeze
       end
 
       def shuffle
