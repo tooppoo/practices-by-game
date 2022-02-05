@@ -74,7 +74,7 @@ RSpec.describe 'Player' do
           preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
           player = preparing.get_ready
-          drawer = player.as_receiver
+          drawer = player.as_drawing
 
           sut = drawer.accept OldMaid::Card::NumberCard.new(3)
 
@@ -89,7 +89,7 @@ RSpec.describe 'Player' do
           preparing = preparing.accept OldMaid::Card::NumberCard.new(3)
 
           player = preparing.get_ready
-          drawer = player.as_receiver
+          drawer = player.as_drawing
 
           sut = drawer.accept OldMaid::Card::NumberCard.new(3)
 
@@ -103,7 +103,7 @@ RSpec.describe 'Player' do
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
       player = preparing.get_ready
-      drawer = player.as_receiver
+      drawer = player.as_drawing
 
       sut = drawer.accept OldMaid::Card::NumberCard.new(3)
 
@@ -116,7 +116,7 @@ RSpec.describe 'Player' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
-      sut = preparing.get_ready.as_provider
+      sut = preparing.get_ready.as_drawn
 
       expect(sut.provide.card).to eq OldMaid::Card::NumberCard.new(1)
     end
@@ -124,7 +124,7 @@ RSpec.describe 'Player' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
-      drawn = preparing.get_ready.as_provider
+      drawn = preparing.get_ready.as_drawn
       sut = drawn.provide.player
 
       expect(sut.rest_cards).to eq 0
@@ -133,7 +133,7 @@ RSpec.describe 'Player' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
-      drawn = preparing.get_ready.as_provider
+      drawn = preparing.get_ready.as_drawn
       sut = drawn.provide.player
 
       expect(sut).not_to respond_to(:provide)
@@ -146,7 +146,7 @@ RSpec.describe 'Player' do
     preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
     preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
 
-    sut = preparing.get_ready.as_provider
+    sut = preparing.get_ready.as_drawn
     sut = sut.provide.player
     sut = sut.accept OldMaid::Card::NumberCard.new(3)
     sut = sut.provide.player
@@ -160,7 +160,7 @@ RSpec.describe 'Player' do
     preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
     preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
 
-    sut = preparing.get_ready.as_receiver
+    sut = preparing.get_ready.as_drawing
     sut = sut.accept OldMaid::Card::NumberCard.new(3)
     sut = sut.provide.player
     sut = sut.accept OldMaid::Card::NumberCard.new(4)
@@ -174,7 +174,7 @@ RSpec.describe 'Player' do
         preparing = OldMaid::Player.prepare(name: 'test')
         preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
-        drawn = preparing.get_ready.as_provider
+        drawn = preparing.get_ready.as_drawn
         sut = drawn.provide.player
 
         expect(sut.finished?).to be true
@@ -186,7 +186,7 @@ RSpec.describe 'Player' do
         preparing = OldMaid::Player.prepare(name: 'test')
         preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
-        drawer = preparing.get_ready.as_receiver
+        drawer = preparing.get_ready.as_drawing
         sut = drawer.accept OldMaid::Card::NumberCard.new(1)
 
         expect(sut.finished?).to be true

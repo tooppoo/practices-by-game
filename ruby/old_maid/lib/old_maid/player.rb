@@ -72,11 +72,11 @@ module OldMaid
           super
         end
 
-        def as_receiver
+        def as_drawing
           transit_to Drawing
         end
 
-        def as_provider
+        def as_drawn
           transit_to Drawn
         end
       end
