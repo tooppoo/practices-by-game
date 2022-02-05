@@ -51,6 +51,10 @@ module OldMaid
         cards.length
       end
 
+      def empty?
+        size == 0
+      end
+
       def to_a
         cards
       end
@@ -63,7 +67,7 @@ module OldMaid
       def take_one
         card, *rest = cards
 
-        TakeCardTuple.new(card, rest)
+        TakeCardTuple.new(card, Deck.new(rest))
       end
 
       def ==(other)

@@ -21,6 +21,10 @@ module OldMaid
       @cards = cards
     end
 
+    def ==(other)
+      name == other.name
+    end
+
     def rest_cards
       cards.length
     end
