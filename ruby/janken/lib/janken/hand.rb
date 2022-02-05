@@ -4,33 +4,24 @@ module Janken
   class Hand
     class << self
       def stone
-        @stone ||= new(key: :stone, stronger_against: :scissors, index: 1)
+        @stone ||= new(key: :stone)
       end
       def scissors
-        @scissors ||= new(key: :scissors, stronger_against: :paper, index: 2)
+        @scissors ||= new(key: :scissors)
       end
       def paper
-        @paper ||= new(key: :paper, stronger_against: :stone, index: 3)
+        @paper ||= new(key: :paper)
       end
     end
 
-    private def initialize(
-      key:,
-      stronger_against:,
-      index:
-    )
+    protected attr_reader :key
+
+    private def initialize(key:)
       @key = key
-      @stronger_against = stronger_against
-      @index = index
     end
 
     def <=>(other)
-      index <=> other.index
-    end
-
-    # @return [Integer]
-    protected def index
-      @index
+      key.<=>(other.key)
     end
 
     class List
@@ -44,17 +35,6 @@ module Janken
 
       private def initialize(hands)
         @hands = hands
-      end
-
-      def winner
-        case kinds.sort
-        when [Janken::Hand.stone, Janken::Hand.scissors].sort
-          Janken::Hand.stone
-        when [Janken::Hand.stone, Janken::Hand.paper].sort
-          Janken::Hand.paper
-        else
-          Janken::Hand.scissors
-        end
       end
 
       def maybe_winner
