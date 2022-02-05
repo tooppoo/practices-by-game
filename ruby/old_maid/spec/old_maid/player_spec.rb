@@ -69,7 +69,7 @@ RSpec.describe 'Player' do
   context 'behave as drawer' do
     describe 'draw a card' do
       context 'the player not has yet' do
-        it 'can accept a card and keep all cards in hand' do
+        it 'accept the card' do
           preparing = OldMaid::Player.prepare(name: 'test')
           preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
@@ -82,7 +82,7 @@ RSpec.describe 'Player' do
         end
       end
       context 'the player has already' do
-        it 'can accept a card and dump same cards' do
+        it 'dump the card with same' do
           preparing = OldMaid::Player.prepare(name: 'test')
           preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
           preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
@@ -98,7 +98,7 @@ RSpec.describe 'Player' do
       end
     end
 
-    it 'can not accept a card twice' do
+    it 'can not draw a card twice in a row' do
       preparing = OldMaid::Player.prepare(name: 'test')
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
@@ -112,7 +112,7 @@ RSpec.describe 'Player' do
   end
 
   context 'behave as drawn' do
-    it 'provide a card' do
+    it 'be drawn a card' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
@@ -120,7 +120,7 @@ RSpec.describe 'Player' do
 
       expect(sut.provide.card).to eq OldMaid::Card::NumberCard.new(1)
     end
-    it 'should decrease cards in hand after provide' do
+    it 'should decrease cards in hand after drawn' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
@@ -129,7 +129,7 @@ RSpec.describe 'Player' do
 
       expect(sut.rest_cards).to eq 0
     end
-    it 'can not provide a card twice' do
+    it 'can not drawn a card twice in a row' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
@@ -140,7 +140,7 @@ RSpec.describe 'Player' do
     end
   end
 
-  it 'can provide, draw and provide a card' do
+  it 'can be drawn, draw and be drawn a card' do
     preparing = OldMaid::Player.prepare(name: 'test')
 
     preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
@@ -154,7 +154,7 @@ RSpec.describe 'Player' do
     expect(sut.rest_cards).to eq 1
   end
 
-  it 'can draw, provide and draw a card' do
+  it 'can draw, be drawn and draw a card' do
     preparing = OldMaid::Player.prepare(name: 'test')
 
     preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
@@ -170,7 +170,7 @@ RSpec.describe 'Player' do
 
   context 'player\'s hand become empty' do
     context 'on drawn' do
-      it 'player become finishing state' do
+      it 'player become finished state' do
         preparing = OldMaid::Player.prepare(name: 'test')
         preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
@@ -182,7 +182,7 @@ RSpec.describe 'Player' do
     end
 
     context 'on draw' do
-      it 'player become finishing state' do
+      it 'player become finished state' do
         preparing = OldMaid::Player.prepare(name: 'test')
         preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
 
@@ -194,7 +194,7 @@ RSpec.describe 'Player' do
     end
 
     context 'on get-ready, a player already has no cards' do
-      it 'player become finishing state' do
+      it 'player become finished state' do
         preparing = OldMaid::Player.prepare(name: 'test')
         preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
         preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
