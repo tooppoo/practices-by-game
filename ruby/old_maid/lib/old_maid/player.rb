@@ -3,22 +3,26 @@
 module OldMaid
   class Player
     def self.prepare(name:)
-      new(name: name, cards: {}, event_emitter: OldMaid::Util::EventEmitter.new).instance_eval do
+      new(
+        name: name,
+        cards_in_hand: CardsInHand.empty,
+        event_emitter: OldMaid::Util::EventEmitter.new
+      ).instance_eval do
         transit_to State::Preparing
       end
     end
 
-    attr_reader :name
-    private attr_reader :cards, :event_emitter
+    attr_reader :name, :cards_in_hand
+    private attr_reader :event_emitter
 
-    protected def initialize(name:, cards:, event_emitter:)
+    protected def initialize(name:, cards_in_hand:, event_emitter:)
       invalid_chars = %W[< > # $ % \\ \t \n \u0000]
 
       raise ArgumentError.new("invalid characters contained") if invalid_chars.any? { |c| name.include? c }
       raise ArgumentError.new("not allowed empty player name") if name.empty?
 
       @name = name
-      @cards = cards
+      @cards_in_hand = cards_in_hand
       @event_emitter = event_emitter
     end
 
@@ -47,12 +51,8 @@ module OldMaid
       name == other.name
     end
 
-    def cards_in_hand
-      cards.dup.freeze
-    end
-
     def rest_cards
-      cards.length
+      cards_in_hand.length
     end
 
     def finished?
@@ -62,16 +62,16 @@ module OldMaid
     def to_h
       {
         name: name,
-        cards: cards,
+        cards_in_hand: cards_in_hand.to_a,
       }
     end
 
-    private def cards_without(card)
-      cards.reject { |_, c| c == card }
-    end
-
-    private def transit_to(next_state, name: self.name, cards: self.cards)
-      next_state.new(name: name, cards: cards, event_emitter: event_emitter)
+    private def transit_to(next_state, name: self.name, cards_in_hand: self.cards_in_hand)
+      next_state.new(
+        name: name,
+        cards_in_hand: cards_in_hand,
+        event_emitter: event_emitter
+      )
     end
 
     module Event
@@ -82,19 +82,61 @@ module OldMaid
       FINISH = 'on_finish'
     end
 
+    class CardsInHand
+      def self.empty
+        new({})
+      end
+
+      private attr_reader :cards
+
+      protected def initialize(cards)
+        @cards = cards
+      end
+
+      def sample(random:)
+        cards.values.sample(random: random)
+      end
+      def length
+        cards.length
+      end
+      def empty?
+        cards.empty?
+      end
+
+      def to_a
+        cards.values.map(&:to_s)
+      end
+
+      def dump(card)
+        with cards.reject { |_, c| c == card }
+      end
+
+      def include?(card)
+        cards.include?(card.to_sym)
+      end
+
+      def add(card)
+        with cards.merge({ card.to_sym => card })
+      end
+
+      private def with(cards)
+        CardsInHand.new(cards)
+      end
+    end
+
     module State
       module Acceptable
         def accept(card)
           event_emitter.emit(Event::ACCEPT, self, card)
 
-          next_cards = if cards.include?(card.to_sym)
+          next_cards = if cards_in_hand.include?(card)
                          event_emitter.emit(Event::DUMP, self, card)
-                         cards_without card
+                         cards_in_hand.dump card
                        else
-                         cards.merge({ card.to_sym => card })
+                         cards_in_hand.add card
                        end
 
-          transit_to(state_after_accept(next_cards: next_cards), cards: next_cards)
+          transit_to(state_after_accept(next_cards: next_cards), cards_in_hand: next_cards)
         end
 
         private def state_after_accept(next_cards:)
@@ -104,7 +146,7 @@ module OldMaid
 
       class Preparing < Player
         def get_ready
-          if cards.empty?
+          if cards_in_hand.empty?
             transit_to Finished
           else
             transit_to GetReady
@@ -118,8 +160,8 @@ module OldMaid
       end
 
       class GetReady < Player
-        protected def initialize(name:, cards:, event_emitter:)
-          raise ArgumentError.new("when a player be get-ready, the player must have at least one card") if cards.empty?
+        protected def initialize(name:, cards_in_hand:, event_emitter:)
+          raise ArgumentError.new("when a player be get-ready, the player must have at least one card") if cards_in_hand.empty?
 
           super
         end
@@ -153,26 +195,26 @@ module OldMaid
         end
 
         def provide(randomizer = Random.new)
-          drawn = cards.values.sample(random: randomizer)
+          drawn = cards_in_hand.sample(random: randomizer)
 
           event_emitter.emit(Event::DRAWN, self, drawn)
 
-          cards_after_drawn = cards_without drawn
+          cards_after_drawn = cards_in_hand.dump drawn
 
           next_state = if cards_after_drawn.empty?
                          Finished
                        else
                          Drawing
                        end
-          player = transit_to next_state, cards: cards_after_drawn
+          player = transit_to next_state, cards_in_hand: cards_after_drawn
 
           TupleProvide.new(drawn, player)
         end
       end
       
       class Finished < Player
-        protected def initialize(name:, cards:, event_emitter:)
-          raise ArgumentError.new("when a player finished, the player can not any cards") unless cards.empty?
+        protected def initialize(name:, cards_in_hand:, event_emitter:)
+          raise ArgumentError.new("when a player finished, the player can not any cards") unless cards_in_hand.empty?
 
           event_emitter.emit(Event::FINISH, self)
 
