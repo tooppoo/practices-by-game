@@ -119,9 +119,10 @@ module OldMaid
         end
 
         private def transit_to(_)
-          self
+          raise InvalidTransitionError.new("Finished is end of state. player can not transit to any state from Finished")
         end
       end
+      class InvalidTransitionError < RuntimeError; end
     end
   end
 end
