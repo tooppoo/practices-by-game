@@ -3,8 +3,8 @@
 module OldMaid
   class Player
     def self.prepare(name:)
-      new(name: name, cards: {}).tap do |player|
-        OldMaid::Player::State::Preparing.apply player
+      new(name: name, cards: {}).instance_eval do
+        transit_to State::Preparing
       end
     end
 
@@ -25,29 +25,20 @@ module OldMaid
       cards.length
     end
 
-    def clone
-      Player.new(name: name, cards: cards.dup)
+    private def transit_to(next_state, name: self.name, cards: self.cards)
+      next_state.new(name: name, cards: cards)
     end
 
     module State
-      module BaseState
-        private def transit_to(next_state, &decorate)
-          clone.tap do |c|
-            c.extend next_state
-
-            c.instance_eval &decorate if block_given?
-          end
-        end
-      end
       module Acceptable
         def accept(card)
-          transit_to state_after_accept do
-            if cards.include?(card.to_sym)
-              cards.delete card.to_sym
-            else
-              cards[card.to_sym] = card
-            end
-          end
+          next_cards = if cards.include?(card.to_sym)
+                         cards.reject { |k| k == card.to_sym }
+                       else
+                         cards.merge({ card.to_sym => card })
+                       end
+
+          transit_to state_after_accept, cards: next_cards
         end
 
         private def state_after_accept
@@ -55,13 +46,7 @@ module OldMaid
         end
       end
 
-      module Preparing
-        include BaseState
-
-        def self.apply(player)
-          player.extend self
-        end
-
+      class Preparing < Player
         def get_ready
           transit_to(GetReady)
         end
@@ -71,9 +56,8 @@ module OldMaid
           Preparing
         end
       end
-      module GetReady
-        include BaseState
 
+      class GetReady < Player
         def as_receiver
           transit_to Drawing
         end
@@ -82,24 +66,21 @@ module OldMaid
           transit_to Drawn
         end
       end
-      module Drawing
-        include BaseState
 
+      class Drawing < Player
         include Acceptable
+
         private def state_after_accept
           Drawn
         end
       end
-      module Drawn
-        include BaseState
 
+      class Drawn < Player
         TupleProvide = Struct.new(:card, :player)
 
         def provide(randomizer = Random.new)
           drawn = cards.values.sample(random: randomizer)
-          player = transit_to(Drawing) do
-            cards.reject! { |_, card| card == drawn }
-          end
+          player = transit_to Drawing, cards: cards.reject { |_, card| card == drawn }
 
           TupleProvide.new(drawn, player)
         end
