@@ -39,6 +39,21 @@ module OldMaid
           end
         end
       end
+      module Acceptable
+        def accept(card)
+          transit_to state_after_accept do
+            if cards.include?(card.to_sym)
+              cards.delete card.to_sym
+            else
+              cards[card.to_sym] = card
+            end
+          end
+        end
+
+        private def state_after_accept
+          raise NotImplementedError.new
+        end
+      end
 
       module Preparing
         include BaseState
@@ -47,14 +62,13 @@ module OldMaid
           player.extend self
         end
 
-        def accept(card)
-          transit_to Preparing do
-            cards[card.to_sym] = card
-          end
-        end
-
         def get_ready
           transit_to(GetReady)
+        end
+
+        include Acceptable
+        private def state_after_accept
+          Preparing
         end
       end
       module GetReady
@@ -71,14 +85,9 @@ module OldMaid
       module Drawing
         include BaseState
 
-        def accept(card)
-          transit_to Drawn do
-            if cards.include?(card.to_sym)
-              cards.delete card.to_sym
-            else
-              cards[card.to_sym] = card
-            end
-          end
+        include Acceptable
+        private def state_after_accept
+          Drawn
         end
       end
       module Drawn

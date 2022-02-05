@@ -42,6 +42,21 @@ RSpec.describe 'Player' do
       expect(sut.rest_cards).to eq 3
     end
 
+    it 'should dump same cards within accepting' do
+      preparing = OldMaid::Player.prepare(name: 'test')
+
+      preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
+      preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
+      preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
+
+      preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+      preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+      preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+      sut = preparing.accept OldMaid::Card::NumberCard.new(1)
+
+      expect(sut.rest_cards).to eq 1
+    end
+
     it 'not accept cards after get-ready' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
