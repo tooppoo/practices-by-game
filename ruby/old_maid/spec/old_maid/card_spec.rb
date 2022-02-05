@@ -37,6 +37,43 @@ RSpec.describe 'Card' do
         end
       end
     end
+
+    describe 'compare' do
+      where(:case_name, :card1, :card2, :expected) do
+        [
+          [
+            'number 1 == number 1',
+            OldMaid::Card::NumberCard.new(1),
+            OldMaid::Card::NumberCard.new(1),
+            true,
+          ],
+          [
+            'number 1 == number 2',
+            OldMaid::Card::NumberCard.new(1),
+            OldMaid::Card::NumberCard.new(2),
+            false,
+          ],
+          [
+            'number 1 == joker',
+            OldMaid::Card::NumberCard.new(1),
+            OldMaid::Card::Joker.instance,
+            false,
+          ],
+          [
+            'joker == number 1',
+            OldMaid::Card::Joker.instance,
+            OldMaid::Card::NumberCard.new(1),
+            false,
+          ],
+        ]
+      end
+
+      with_them do
+        it "should return #{params[:expected]}" do
+          expect(card1 == card2).to be expected
+        end
+      end
+    end
   end
   describe 'Deck' do
     context 'open new pack' do

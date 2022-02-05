@@ -13,7 +13,12 @@ module OldMaid
       end
 
       def ==(other)
-        number == other.number
+        case other
+        when Joker
+          false
+        else
+          number == other.number
+        end
       end
 
       def to_sym
