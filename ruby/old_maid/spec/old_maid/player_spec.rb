@@ -178,5 +178,17 @@ RSpec.describe 'Player' do
         expect(sut.finished?).to be true
       end
     end
+
+    context 'on draw' do
+      it 'player become finishing state' do
+        preparing = OldMaid::Player.prepare(name: 'test')
+        preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+
+        drawer = preparing.get_ready.as_receiver
+        sut = drawer.accept OldMaid::Card::NumberCard.new(1)
+
+        expect(sut.finished?).to be true
+      end
+    end
   end
 end

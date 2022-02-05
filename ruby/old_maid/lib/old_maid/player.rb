@@ -42,10 +42,10 @@ module OldMaid
                          cards.merge({ card.to_sym => card })
                        end
 
-          transit_to state_after_accept, cards: next_cards
+          transit_to state_after_accept(next_cards: next_cards), cards: next_cards
         end
 
-        private def state_after_accept
+        private def state_after_accept(next_cards:)
           raise NotImplementedError.new
         end
       end
@@ -56,7 +56,7 @@ module OldMaid
         end
 
         include Acceptable
-        private def state_after_accept
+        private def state_after_accept(next_cards:)
           Preparing
         end
       end
@@ -74,8 +74,12 @@ module OldMaid
       class Drawing < Player
         include Acceptable
 
-        private def state_after_accept
-          Drawn
+        private def state_after_accept(next_cards:)
+          if next_cards.empty?
+            Finished
+          else
+            Drawn
+          end
         end
       end
 
