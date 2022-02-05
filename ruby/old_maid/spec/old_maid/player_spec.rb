@@ -79,14 +79,14 @@ RSpec.describe 'Player' do
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
       sut = preparing.get_ready.as_provider
 
-      expect(sut.drawn.card).to eq OldMaid::Card::NumberCard.new(1)
+      expect(sut.provide.card).to eq OldMaid::Card::NumberCard.new(1)
     end
     it 'should decrease cards in hand after provide' do
       preparing = OldMaid::Player.prepare(name: 'test')
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
       drawn = preparing.get_ready.as_provider
-      sut = drawn.drawn.player
+      sut = drawn.provide.player
 
       expect(sut.rest_cards).to eq 0
     end
@@ -95,9 +95,9 @@ RSpec.describe 'Player' do
 
       preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
       drawn = preparing.get_ready.as_provider
-      sut = drawn.drawn.player
+      sut = drawn.provide.player
 
-      expect(sut).not_to respond_to(:drawn)
+      expect(sut).not_to respond_to(:provide)
     end
   end
 
@@ -108,9 +108,9 @@ RSpec.describe 'Player' do
     preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
 
     sut = preparing.get_ready.as_provider
-    sut = sut.drawn.player
+    sut = sut.provide.player
     sut = sut.accept OldMaid::Card::NumberCard.new(3)
-    sut = sut.drawn.player
+    sut = sut.provide.player
 
     expect(sut.rest_cards).to eq 1
   end
@@ -123,7 +123,7 @@ RSpec.describe 'Player' do
 
     sut = preparing.get_ready.as_receiver
     sut = sut.accept OldMaid::Card::NumberCard.new(3)
-    sut = sut.drawn.player
+    sut = sut.provide.player
     sut = sut.accept OldMaid::Card::NumberCard.new(4)
 
     expect(sut.rest_cards).to eq 3

@@ -4,7 +4,7 @@ module OldMaid
   class Player
     def self.prepare(name:)
       new(name: name, cards: []).tap do |player|
-        player.extend OldMaid::Player::State::Preparing
+        OldMaid::Player::State::Preparing.apply player
       end
     end
 
@@ -25,60 +25,72 @@ module OldMaid
       cards.length
     end
 
-    def copy
+    def clone
       Player.new(name: name, cards: cards.dup)
     end
 
     module State
+      module BaseState
+        private def transit_to(next_state, &decorate)
+          clone.tap do |c|
+            c.extend next_state
+
+            c.instance_eval &decorate if block_given?
+          end
+        end
+      end
+
       module Preparing
+        include BaseState
+
+        def self.apply(player)
+          player.extend self
+        end
+
         def accept(card)
-          copy.tap do |c|
-            c.instance_eval { cards << card }
-            c.extend Preparing
+          transit_to Preparing do
+            cards << card
           end
         end
 
         def get_ready
-          copy.tap do |c|
-            c.extend GetReady
-          end
+          transit_to(GetReady)
         end
       end
       module GetReady
+        include BaseState
+
         def as_receiver
-          copy.tap do |c|
-            c.extend Drawing
-          end
+          transit_to Drawing
         end
 
         def as_provider
-          copy.tap do |c|
-            c.extend Drawn
-          end
+          transit_to Drawn
         end
       end
       module Drawing
-        def accept(card)
-          copy.tap do |c|
-            c.instance_eval { cards << card }
+        include BaseState
 
-            c.extend Drawn
+        def accept(card)
+          transit_to Drawn do
+            cards << card
           end
         end
       end
       module Drawn
+        include BaseState
+
         TupleProvide = Struct.new(:card, :player)
 
-        def drawn(randomizer = Random.new)
-          copy.instance_eval do
-            index = randomizer.rand(0...rest_cards)
+        def provide(randomizer = Random.new)
+          index = randomizer.rand(0...rest_cards)
 
-            drawn = cards[index]
+          drawn = cards[index]
+          player = transit_to(Drawing) do
             cards.reject! { |card| card == drawn }
-            extend Drawing
-
-            TupleProvide.new(drawn, self)
           end
+
+          TupleProvide.new(drawn, player)
         end
       end
     end
