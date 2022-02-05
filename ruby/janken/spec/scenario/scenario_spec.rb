@@ -5,11 +5,14 @@ require_relative '../../lib/janken'
 
 describe 'Janken Scenario' do
   let(:game) do
-    game = Janken::Game.new(times: 3).tap do |g|
-      g << player1
-      g << player2
-      g << player3
-    end
+    game = Janken::Game.new(
+      times: 3,
+      players: [
+        player1,
+        player2,
+        player3,
+      ]
+    )
   end
 
   context 'player1~3 exists, player1 show hand paper, stone, scissors, player2 show only stone, player3 show only scissors' do

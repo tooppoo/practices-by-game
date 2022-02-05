@@ -4,19 +4,19 @@ require_relative './hand'
 
 module Janken
   class Game
-    def initialize(times:)
+    private attr_reader :times, :players
+
+    def initialize(times:, players:)
+      raise ArgumentError.new("players must exist at least 2") if players.length < 2
+
       @times = times
 
-      @players = []
-    end
-
-    def <<(player)
-      @players << player
+      @players = players
     end
 
     def play
-      result_by_games = (1..@times).map do
-        selected_hands = @players.map(&:select_hand)
+      result_by_games = (1..times).map do
+        selected_hands = players.map(&:select_hand)
 
         selected_hand_list = Janken::Hand::List.at_least_one(selected_hands.map(&:hand))
         selected_hand_list.maybe_winner.map do |hand_of_winner|
