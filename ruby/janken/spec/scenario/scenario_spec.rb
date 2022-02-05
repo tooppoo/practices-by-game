@@ -51,7 +51,7 @@ describe 'Janken Scenario' do
       it 'not draw game' do
         result = game.play
         
-        expect(result.is_draw?).to eq false
+        expect(result.draw?).to eq false
       end
     end
   end
@@ -92,7 +92,7 @@ describe 'Janken Scenario' do
       it 'not draw game' do
         result = game.play
 
-        expect(result.is_draw?).to eq false
+        expect(result.draw?).to eq false
       end
     end
   end
@@ -133,7 +133,7 @@ describe 'Janken Scenario' do
       it 'is draw game' do
         result = game.play
 
-        expect(result.is_draw?).to eq true
+        expect(result.draw?).to eq true
       end
     end
   end

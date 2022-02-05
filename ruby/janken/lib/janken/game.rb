@@ -69,7 +69,7 @@ module Janken
           end
         end
 
-        def is_draw?
+        def draw?
           winners.empty? && losers.empty?
         end
 
