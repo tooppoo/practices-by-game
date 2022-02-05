@@ -3,7 +3,7 @@
 module OldMaid
   module Card
     class NumberCard
-      attr_reader :number
+      protected attr_reader :number
 
       def initialize(number)
         raise ArgumentError.new("card number must be integer") unless number.integer?
@@ -22,7 +22,11 @@ module OldMaid
       end
 
       def to_sym
-        number.to_s.to_sym
+        to_s.to_sym
+      end
+
+      def to_s
+        number.to_s
       end
     end
     class Joker
@@ -32,6 +36,10 @@ module OldMaid
 
       def to_sym
         :joker
+      end
+
+      def to_s
+        "Joker"
       end
     end
 
@@ -46,11 +54,11 @@ module OldMaid
         new(cards)
       end
 
-      protected def initialize(cards)
-        @cards = cards
-      end
+      attr_reader :cards
 
-      private attr_reader :cards
+      protected def initialize(cards)
+        @cards = cards.freeze
+      end
 
       def size
         cards.length

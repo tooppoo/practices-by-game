@@ -3,15 +3,15 @@
 module OldMaid
   class Player
     def self.prepare(name:)
-      new(name: name, cards: {}).instance_eval do
+      new(name: name, cards: {}, event_emitter: OldMaid::Util::EventEmitter.new).instance_eval do
         transit_to State::Preparing
       end
     end
 
     attr_reader :name
-    private attr_reader :cards
+    private attr_reader :cards, :event_emitter
 
-    protected def initialize(name:, cards:)
+    protected def initialize(name:, cards:, event_emitter:)
       invalid_chars = %W[< > # $ % \\ \t \n \u0000]
 
       raise ArgumentError.new("invalid characters contained") if invalid_chars.any? { |c| name.include? c }
@@ -19,10 +19,36 @@ module OldMaid
 
       @name = name
       @cards = cards
+      @event_emitter = event_emitter
+    end
+
+    def on_dump_card(&handler)
+      tap do
+        event_emitter.on(Event::DUMP, &handler)
+      end
+    end
+    def on_accept(&handler)
+      tap do
+        event_emitter.on(Event::ACCEPT, &handler)
+      end
+    end
+    def on_drawn(&handler)
+      tap do
+        event_emitter.on(Event::DRAWN, &handler)
+      end
+    end
+    def on_finish(&handler)
+      tap do
+        event_emitter.on(Event::FINISH, &handler)
+      end
     end
 
     def ==(other)
       name == other.name
+    end
+
+    def cards_in_hand
+      cards.dup.freeze
     end
 
     def rest_cards
@@ -33,20 +59,42 @@ module OldMaid
       self.class == State::Finished
     end
 
+    def to_h
+      {
+        name: name,
+        cards: cards,
+      }
+    end
+
+    private def cards_without(card)
+      cards.reject { |_, c| c == card }
+    end
+
     private def transit_to(next_state, name: self.name, cards: self.cards)
-      next_state.new(name: name, cards: cards)
+      next_state.new(name: name, cards: cards, event_emitter: event_emitter)
+    end
+
+    module Event
+      GET_READY = 'on_get_ready'
+      DUMP = 'on_dump'
+      ACCEPT = 'on_accept'
+      DRAWN = 'on_drawn'
+      FINISH = 'on_finish'
     end
 
     module State
       module Acceptable
         def accept(card)
+          event_emitter.emit(Event::ACCEPT, self, card)
+
           next_cards = if cards.include?(card.to_sym)
-                         cards.reject { |_, c| c == card }
+                         event_emitter.emit(Event::DUMP, self, card)
+                         cards_without card
                        else
                          cards.merge({ card.to_sym => card })
                        end
 
-          transit_to state_after_accept(next_cards: next_cards), cards: next_cards
+          transit_to(state_after_accept(next_cards: next_cards), cards: next_cards)
         end
 
         private def state_after_accept(next_cards:)
@@ -70,7 +118,7 @@ module OldMaid
       end
 
       class GetReady < Player
-        protected def initialize(name:, cards:)
+        protected def initialize(name:, cards:, event_emitter:)
           raise ArgumentError.new("when a player be get-ready, the player must have at least one card") if cards.empty?
 
           super
@@ -98,11 +146,18 @@ module OldMaid
       end
 
       class Drawn < Player
-        TupleProvide = Struct.new(:card, :player)
+        TupleProvide = Struct.new(:card, :player) do
+          def to_a
+            [card, player]
+          end
+        end
 
         def provide(randomizer = Random.new)
           drawn = cards.values.sample(random: randomizer)
-          cards_after_drawn = cards.reject { |_, card| card == drawn }
+
+          event_emitter.emit(Event::DRAWN, self, drawn)
+
+          cards_after_drawn = cards_without drawn
 
           next_state = if cards_after_drawn.empty?
                          Finished
@@ -116,8 +171,10 @@ module OldMaid
       end
       
       class Finished < Player
-        protected def initialize(name:, cards:)
+        protected def initialize(name:, cards:, event_emitter:)
           raise ArgumentError.new("when a player finished, the player can not any cards") unless cards.empty?
+
+          event_emitter.emit(Event::FINISH, self)
 
           super
         end

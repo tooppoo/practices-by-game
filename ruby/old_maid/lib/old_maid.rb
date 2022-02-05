@@ -5,5 +5,8 @@ module OldMaid
   require_relative './old_maid/dealer'
   require_relative './old_maid/game'
   require_relative './old_maid/player'
-end
 
+  module Util
+    require_relative './util/event_emitter'
+  end
+end
