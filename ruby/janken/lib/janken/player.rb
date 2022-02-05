@@ -67,12 +67,12 @@ module Janken
         @owner = owner
       end
 
-      def ==(hand)
-        case hand
-        when Janken::Hand
-          @hand == hand
+      def ==(other_hand)
+        case other_hand
+        when SelectedHand
+          hand == other_hand.hand
         else
-          self == hand
+          hand == other_hand
         end
       end
 

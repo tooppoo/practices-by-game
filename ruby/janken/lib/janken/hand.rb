@@ -1,27 +1,66 @@
 # frozen_string_literal: true
 
+require 'singleton'
+
 module Janken
-  class Hand
+  module Hand
     class << self
       def stone
-        @stone ||= new(key: :stone)
+        @stone ||= Kind::Stone.instance
       end
       def scissors
-        @scissors ||= new(key: :scissors)
+        @scissors ||= Kind::Scissors.instance
       end
       def paper
-        @paper ||= new(key: :paper)
+        @paper ||= Kind::Paper.instance
       end
     end
 
-    protected attr_reader :key
+    module Kind
+      module EqBySym
+        def ==(other)
+          to_sym == other.to_sym
+        end
+        def eql?(other)
+          self == other
+        end
+        def hash
+          to_sym.hash
+        end
+      end
+      class Stone
+        include EqBySym, Singleton
 
-    private def initialize(key:)
-      @key = key
-    end
+        def stronger_than(other)
+          other == Hand.scissors
+        end
 
-    def <=>(other)
-      key.<=>(other.key)
+        def to_sym
+          :stone
+        end
+      end
+      class Scissors
+        include EqBySym, Singleton
+
+        def stronger_than(other)
+          other == Hand.paper
+        end
+
+        def to_sym
+          :scissors
+        end
+      end
+      class Paper
+        include EqBySym, Singleton
+
+        def stronger_than(other)
+          other == Hand.stone
+        end
+
+        def to_sym
+          :paper
+        end
+      end
     end
 
     class List
@@ -33,6 +72,8 @@ module Janken
         new(hands)
       end
 
+      private attr_reader :hands
+
       private def initialize(hands)
         @hands = hands
       end
@@ -40,14 +81,9 @@ module Janken
       def maybe_winner
         return ::Utils::Maybe.none if include_all? || include_only_one?
 
-        ::Utils::Maybe.some case kinds.sort
-                            when [Janken::Hand.stone, Janken::Hand.scissors].sort
-                              Janken::Hand.stone
-                            when [Janken::Hand.stone, Janken::Hand.paper].sort
-                              Janken::Hand.paper
-                            else
-                              Janken::Hand.scissors
-                            end
+        a, b = kinds
+
+        ::Utils::Maybe.some(a.stronger_than(b) ? a : b)
       end
 
       private
@@ -61,7 +97,7 @@ module Janken
       end
 
       def kinds
-        @kinds ||= @hands.uniq
+        @kinds ||= hands.uniq
       end
     end
   end
