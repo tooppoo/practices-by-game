@@ -52,7 +52,11 @@ module OldMaid
 
       class Preparing < Player
         def get_ready
-          transit_to GetReady
+          if cards.empty?
+            transit_to Finished
+          else
+            transit_to GetReady
+          end
         end
 
         include Acceptable
@@ -62,6 +66,12 @@ module OldMaid
       end
 
       class GetReady < Player
+        protected def initialize(name:, cards:)
+          raise ArgumentError.new("when a player be get-ready, the player must have at least one card") if cards.empty?
+
+          super
+        end
+
         def as_receiver
           transit_to Drawing
         end

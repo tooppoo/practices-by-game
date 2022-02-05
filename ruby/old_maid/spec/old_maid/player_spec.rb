@@ -100,6 +100,8 @@ RSpec.describe 'Player' do
 
     it 'can not accept a card twice' do
       preparing = OldMaid::Player.prepare(name: 'test')
+      preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+
       player = preparing.get_ready
       drawer = player.as_receiver
 
@@ -186,6 +188,18 @@ RSpec.describe 'Player' do
 
         drawer = preparing.get_ready.as_receiver
         sut = drawer.accept OldMaid::Card::NumberCard.new(1)
+
+        expect(sut.finished?).to be true
+      end
+    end
+
+    context 'on get-ready, a player already has no cards' do
+      it 'player become finishing state' do
+        preparing = OldMaid::Player.prepare(name: 'test')
+        preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+        preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+
+        sut = preparing.get_ready
 
         expect(sut.finished?).to be true
       end
