@@ -15,7 +15,7 @@ module Janken
     end
 
     def play
-      result_by_games = (1..times).map do
+      (1..times).each do
         selected_hands = players.map(&:select_hand)
 
         selected_hand_list = Janken::Hand::List.at_least_one(selected_hands.map(&:hand))
@@ -24,41 +24,23 @@ module Janken
             .select { |h| h == hand_of_winner }
             .each { |h| h.owner.notify_win }
         end
-
-        Result::Each.create_for(selected_hands)
       end
 
-      Result::Total.new(result_by_games)
+      Result::Total.new(players)
     end
 
     module Result
-      class Each
-        def self.create_for(selected_hands)
-          new(selected_hands)
-        end
-
-        private def initialize(selected_hands)
-          @selected_hands = selected_hands
-        end
-
-        def players
-          @selected_hands.map(&:owner).uniq
-        end
-      end
-
       class Total
         attr_reader :winners
 
-        def initialize(each_results)
+        def initialize(players)
           init = {
             most_win_count: Janken::Player::WinCount.zero,
             winners: [],
             losers: [],
           }
 
-          @whole_players = whole_players(each_results)
-
-          sum = @whole_players.inject(init) do |xs, player|
+          sum = players.inject(init) do |xs, player|
             if not player.has_won?
               xs.merge({ losers: xs[:losers] + [player] })
             elsif xs[:most_win_count] == player.win_count
@@ -76,6 +58,7 @@ module Janken
 
           @winners = sum[:winners]
           @losers = sum[:losers]
+          @whole_players = players
         end
 
         def losers
