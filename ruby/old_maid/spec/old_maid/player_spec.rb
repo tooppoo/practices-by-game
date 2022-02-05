@@ -165,4 +165,18 @@ RSpec.describe 'Player' do
 
     expect(sut.rest_cards).to eq 3
   end
+
+  context 'player\'s hand become empty' do
+    context 'on drawn' do
+      it 'player become finishing state' do
+        preparing = OldMaid::Player.prepare(name: 'test')
+        preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+
+        drawn = preparing.get_ready.as_provider
+        sut = drawn.provide.player
+
+        expect(sut.finished?).to be true
+      end
+    end
+  end
 end

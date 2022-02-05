@@ -25,6 +25,10 @@ module OldMaid
       cards.length
     end
 
+    def finished?
+      self.class == State::Finished
+    end
+
     private def transit_to(next_state, name: self.name, cards: self.cards)
       next_state.new(name: name, cards: cards)
     end
@@ -33,7 +37,7 @@ module OldMaid
       module Acceptable
         def accept(card)
           next_cards = if cards.include?(card.to_sym)
-                         cards.reject { |k| k == card.to_sym }
+                         cards.reject { |_, c| c == card }
                        else
                          cards.merge({ card.to_sym => card })
                        end
@@ -48,7 +52,7 @@ module OldMaid
 
       class Preparing < Player
         def get_ready
-          transit_to(GetReady)
+          transit_to GetReady
         end
 
         include Acceptable
@@ -80,9 +84,28 @@ module OldMaid
 
         def provide(randomizer = Random.new)
           drawn = cards.values.sample(random: randomizer)
-          player = transit_to Drawing, cards: cards.reject { |_, card| card == drawn }
+          cards_after_drawn = cards.reject { |_, card| card == drawn }
+
+          next_state = if cards_after_drawn.empty?
+                         Finished
+                       else
+                         Drawing
+                       end
+          player = transit_to next_state, cards: cards_after_drawn
 
           TupleProvide.new(drawn, player)
+        end
+      end
+      
+      class Finished < Player
+        protected def initialize(name:, cards:)
+          raise ArgumentError.new("when a player finished, the player can not any cards") unless cards.empty?
+
+          super
+        end
+
+        private def transit_to(_)
+          self
         end
       end
     end
