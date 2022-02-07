@@ -78,9 +78,8 @@ module OldMaid
           transit_to Drawer
         end
 
-        def provide(randomizer = Random.new)
-          drawn = cards_in_hand.sample(random: randomizer)
-
+        def provide
+          drawn = select_provide
           event_emitter.emit(Event::DRAWN, self, drawn)
 
           cards_after_drawn = cards_in_hand.dump drawn
@@ -93,6 +92,10 @@ module OldMaid
           player = transit_to next_state, cards_in_hand: cards_after_drawn
 
           OldMaid::Util::Tuple.new(drawn, player)
+        end
+
+        private def select_provide
+          cards_in_hand.sample
         end
       end
 
