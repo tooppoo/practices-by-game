@@ -13,6 +13,10 @@ module OldMaid
         @cards = cards
       end
 
+      def pick(at:)
+        @cards.values[at]
+      end
+
       def ==(other)
         cards == other.cards
       end

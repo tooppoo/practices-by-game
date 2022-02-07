@@ -59,9 +59,19 @@ module OldMaid
         private :accept
 
         def draw_from(drawn)
-          card, drawn_after = drawn.provide.to_a
+          card, drawn_after = drawn.provide(at: draw_strategy.pick_from(drawn)).to_a
 
           OldMaid::Util::Tuple.new((accept card), drawn_after)
+        end
+
+        private def draw_strategy
+          @strategy ||= Struct.new('Random') do
+            def pick_from(drawn)
+              drawn.providable_range.to_a.sample
+            end
+          end
+
+          @strategy.new
         end
 
         private def state_after_accept(next_cards:)
@@ -78,8 +88,13 @@ module OldMaid
           transit_to Drawer
         end
 
-        def provide
-          drawn = select_provide
+        def providable_range
+          (0...rest_cards)
+        end
+
+        def provide(at:)
+          drawn = cards_in_hand.pick(at: at)
+
           event_emitter.emit(Event::DRAWN, self, drawn)
 
           cards_after_drawn = cards_in_hand.dump drawn
@@ -92,10 +107,6 @@ module OldMaid
           player = transit_to next_state, cards_in_hand: cards_after_drawn
 
           OldMaid::Util::Tuple.new(drawn, player)
-        end
-
-        private def select_provide
-          cards_in_hand.sample
         end
       end
 

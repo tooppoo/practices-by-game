@@ -9,6 +9,8 @@ begin
     OldMaid::Player.prepare(name: 'player-1'),
     OldMaid::Player.prepare(name: 'player-2'),
     OldMaid::Player.prepare(name: 'player-3'),
+    OldMaid::Player.prepare(name: 'player-4'),
+    OldMaid::Player.prepare(name: 'player-5'),
   ].map do |player|
     player.on_dump_card { |p, card| log << "#{p.name} dumped #{card} from #{p.cards_in_hand.to_a}" }
           .on_drawn { |p, card| log << "#{p.name} drawn #{card} from #{p.cards_in_hand.to_a}" }

@@ -121,7 +121,7 @@ RSpec.describe 'Player' do
                              .accept(OldMaid::Card::NumberCard.new(1))
                              .get_ready.as_drawn
 
-      card,_ = drawn.provide.to_a
+      card,_ = drawn.provide(at: 0).to_a
 
       expect(card).to eq OldMaid::Card::NumberCard.new(1)
     end
@@ -130,7 +130,7 @@ RSpec.describe 'Player' do
                              .accept(OldMaid::Card::NumberCard.new(1))
                              .get_ready.as_drawn
 
-      _,sut = drawn.provide.to_a
+      _,sut = drawn.provide(at: 0).to_a
 
       expect(sut.rest_cards).to eq 0
     end
@@ -139,7 +139,7 @@ RSpec.describe 'Player' do
                              .accept(OldMaid::Card::NumberCard.new(1))
                              .get_ready.as_drawn
 
-      _,sut = drawn.provide.to_a
+      _,sut = drawn.provide(at: 0).to_a
 
       expect(sut).not_to respond_to(:provide)
     end
@@ -168,7 +168,7 @@ RSpec.describe 'Player' do
                                .accept(OldMaid::Card::NumberCard.new(1))
                                .get_ready.as_drawn
 
-        _,sut = drawn.provide.to_a
+        _,sut = drawn.provide(at: 0).to_a
 
         expect(sut.finished?).to be true
       end
