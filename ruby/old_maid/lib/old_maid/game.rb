@@ -41,7 +41,33 @@ module OldMaid
       players_rest
     end
 
+    module Turn
+      def self.proceed(players)
+        drawer, drawn, *rest = players
 
+        drawer_after, drawn_after = drawer.draw_from(drawn).to_a
+
+        case [drawer_after, drawn_after]
+        in [OldMaid::Player::State::Drawn, OldMaid::Player::State::Finished]
+          next_player, *_ = [*rest, drawer_after]
+
+          [next_player.skip_drawn, *_]
+        else
+          [drawn_after, *rest, drawer_after].reject { |p| p.finished? }
+        end
+      end
+    end
+
+    module Event
+      module Deal
+        START = 'on_deal_start'
+        FINISH = 'on_deal_finish'
+      end
+      module Play
+        START = 'on_game_start'
+        FINISH = 'on_game_finish'
+      end
+    end
     def on_deal_start(&handler)
       tap do
         event_emitter.on(Event::Deal::START, &handler)
@@ -61,34 +87,6 @@ module OldMaid
       tap do
         event_emitter.on(Event::Play::FINISH, &handler)
       end
-    end
-  end
-
-  module Turn
-    def self.proceed(players)
-      drawer, drawn, *rest = players
-
-      drawer_after, drawn_after = drawer.draw_from(drawn).to_a
-
-      case [drawer_after, drawn_after]
-      in [OldMaid::Player::State::Drawn, OldMaid::Player::State::Finished]
-        next_player, *_ = [*rest, drawer_after]
-
-        [next_player.skip_drawn, *_]
-      else
-        [drawn_after, *rest, drawer_after].reject { |p| p.finished? }
-      end
-    end
-  end
-
-  module Event
-    module Deal
-      START = 'on_deal_start'
-      FINISH = 'on_deal_finish'
-    end
-    module Play
-      START = 'on_game_start'
-      FINISH = 'on_game_finish'
     end
   end
 end
