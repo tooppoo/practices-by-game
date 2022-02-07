@@ -7,9 +7,9 @@ log = []
 begin
   players = [
     OldMaid::Player.prepare(name: 'player-1'),
-    OldMaid::Player.prepare(name: 'player-2'),
-    OldMaid::Player.prepare(name: 'player-3'),
-    OldMaid::Player.prepare(name: 'player-4'),
+    OldMaid::Player.prepare(name: 'player-2', draw_strategy: OldMaid::Player::Strategy::AlwaysHead.instance),
+    OldMaid::Player.prepare(name: 'player-3', draw_strategy: OldMaid::Player::Strategy::AlwaysLast.instance),
+    OldMaid::Player.prepare(name: 'player-4', draw_strategy: OldMaid::Player::Strategy::AlwaysCenter.instance),
     OldMaid::Player.prepare(name: 'player-5'),
   ].map do |player|
     player.on_dump_card { |p, card| log << "#{p.name} dumped #{card} from #{p.cards_in_hand.to_a}" }
