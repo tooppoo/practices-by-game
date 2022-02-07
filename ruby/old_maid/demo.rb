@@ -24,9 +24,6 @@ begin
                      .on_play_finish { log << "game finish" }
 
   deck = OldMaid::Card::Deck.new_pack
-  # def deck.cards
-  #   [1, 1, 2, 2, 3, 3].map { |n| OldMaid::Card::NumberCard.new(n) }.push OldMaid::Card::Joker.instance
-  # end
 
   loser = sut.play(deck: deck)
 
