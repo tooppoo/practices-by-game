@@ -61,7 +61,14 @@ module OldMaid
         card, drawn_after = drawn.provide.to_a
         drawer_after = drawer.accept card
 
-        players_mut = [drawn_after, *rest, drawer_after].reject { |p| p.finished? }
+        case [drawer_after, drawn_after]
+        in [OldMaid::Player::State::Drawn, OldMaid::Player::State::Finished]
+          next_player, *_ = [*rest, drawer_after]
+
+          players_mut = [next_player.skip_drawn, *_]
+        else
+          players_mut = [drawn_after, *rest, drawer_after].reject { |p| p.finished? }
+        end
       end
 
       players_mut

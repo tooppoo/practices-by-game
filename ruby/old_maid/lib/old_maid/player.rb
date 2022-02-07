@@ -26,6 +26,11 @@ module OldMaid
       @event_emitter = event_emitter
     end
 
+    def on_transit(&handler)
+      tap do
+        event_emitter.on(Event::TRANSIT, &handler)
+      end
+    end
     def on_dump_card(&handler)
       tap do
         event_emitter.on(Event::DUMP, &handler)
@@ -55,14 +60,19 @@ module OldMaid
       cards_in_hand.length
     end
 
+    def current
+      self.class
+    end
+
     def finished?
-      self.class == State::Finished
+      current == State::Finished
     end
 
     def to_h
       {
         name: name,
         cards_in_hand: cards_in_hand.to_a,
+        current: current.to_s,
       }
     end
 
@@ -71,7 +81,9 @@ module OldMaid
         name: name,
         cards_in_hand: cards_in_hand,
         event_emitter: event_emitter
-      )
+      ).tap do |transited|
+        event_emitter.emit(Event::TRANSIT, self, transited)
+      end
     end
 
     module Event
@@ -80,6 +92,8 @@ module OldMaid
       ACCEPT = 'on_accept'
       DRAWN = 'on_drawn'
       FINISH = 'on_finish'
+
+      TRANSIT = 'on_transit'
     end
 
     class CardsInHand
@@ -192,6 +206,10 @@ module OldMaid
           def to_a
             [card, player]
           end
+        end
+
+        def skip_drawn
+          transit_to Drawing
         end
 
         def provide(randomizer = Random.new)

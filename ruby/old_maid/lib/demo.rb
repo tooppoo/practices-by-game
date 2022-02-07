@@ -14,6 +14,7 @@ begin
           .on_drawn { |p, card| log << "#{p.name} drawn #{card} from #{p.cards_in_hand.to_a}" }
           .on_accept { |p, card| log << "#{p.name} accept #{card} in #{p.cards_in_hand.to_a}" }
           .on_finish { log << "#{player.name} finished" }
+          .on_transit { |before, after| log << "#{player.name} transit from #{before.current.to_s} to #{after.current.to_s}" }
   end
 
   sut = OldMaid::Game.new(players: players)
