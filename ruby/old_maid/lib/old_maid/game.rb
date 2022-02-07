@@ -68,7 +68,7 @@ module OldMaid
     def self.proceed(players)
       drawer, drawn, *rest = players
 
-      drawer_after, drawn_after = drawer.draw_from drawn
+      drawer_after, drawn_after = drawer.draw_from(drawn).to_a
 
       case [drawer_after, drawn_after]
       in [OldMaid::Player::State::Drawn, OldMaid::Player::State::Finished]

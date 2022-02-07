@@ -8,5 +8,6 @@ module OldMaid
 
   module Util
     require_relative './util/event_emitter'
+    require_relative './util/tuple'
   end
 end

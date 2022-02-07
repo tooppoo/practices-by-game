@@ -61,7 +61,7 @@ module OldMaid
         def draw_from(drawn)
           card, drawn_after = drawn.provide.to_a
 
-          [(accept card), drawn_after]
+          OldMaid::Util::Tuple.new((accept card), drawn_after)
         end
 
         private def state_after_accept(next_cards:)
@@ -74,12 +74,6 @@ module OldMaid
       end
 
       class Drawn < Player
-        TupleProvide = Struct.new(:card, :player) do
-          def to_a
-            [card, player]
-          end
-        end
-
         def skip_drawn
           transit_to Drawer
         end
@@ -98,7 +92,7 @@ module OldMaid
                        end
           player = transit_to next_state, cards_in_hand: cards_after_drawn
 
-          TupleProvide.new(drawn, player)
+          OldMaid::Util::Tuple.new(drawn, player)
         end
       end
 
