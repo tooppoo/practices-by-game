@@ -56,6 +56,14 @@ module OldMaid
       class Drawing < Player
         include Acceptable
 
+        private :accept
+
+        def draw_from(drawn)
+          card, drawn_after = drawn.provide.to_a
+
+          [(accept card), drawn_after]
+        end
+
         private def state_after_accept(next_cards:)
           if next_cards.empty?
             Finished

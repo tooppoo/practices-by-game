@@ -67,45 +67,52 @@ RSpec.describe 'Player' do
   end
 
   context 'behave as drawer' do
+    let(:drawer) {
+      OldMaid::Player.prepare(name: 'drawer')
+                     .accept(OldMaid::Card::NumberCard.new(1))
+                     .accept(OldMaid::Card::NumberCard.new(2))
+                     .get_ready.as_drawing
+    }
+
     describe 'draw a card' do
       context 'the player not has yet' do
+        let(:drawn) {
+          OldMaid::Player.prepare(name: 'drawn')
+                         .accept(OldMaid::Card::NumberCard.new(3))
+                         .get_ready.as_drawn
+        }
+
         it 'accept the card' do
-          preparing = OldMaid::Player.prepare(name: 'test')
-          preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+          sut,_ = drawer.draw_from drawn
 
-          player = preparing.get_ready
-          drawer = player.as_drawing
-
-          sut = drawer.accept OldMaid::Card::NumberCard.new(3)
-
-          expect(sut.rest_cards).to eq 2
+          expect(sut.rest_cards).to eq drawer.rest_cards + 1
         end
       end
       context 'the player has already' do
+        let(:drawn) {
+          OldMaid::Player.prepare(name: 'drawn')
+                         .accept(OldMaid::Card::NumberCard.new(1))
+                         .get_ready.as_drawn
+        }
+
         it 'dump the card with same' do
-          preparing = OldMaid::Player.prepare(name: 'test')
-          preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
-          preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
-          preparing = preparing.accept OldMaid::Card::NumberCard.new(3)
+          sut,_ = drawer.draw_from drawn
 
-          player = preparing.get_ready
-          drawer = player.as_drawing
-
-          sut = drawer.accept OldMaid::Card::NumberCard.new(3)
-
-          expect(sut.rest_cards).to eq 2
+          expect(sut.rest_cards).to eq drawer.rest_cards - 1
         end
       end
     end
 
     it 'can not draw a card twice in a row' do
-      preparing = OldMaid::Player.prepare(name: 'test')
-      preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+      drawer = OldMaid::Player.prepare(name: 'drawer')
+                              .accept(OldMaid::Card::NumberCard.new(1))
+                              .get_ready.as_drawing
+      drawn = OldMaid::Player.prepare(name: 'drawn')
+                              .accept(OldMaid::Card::NumberCard.new(1))
+                              .accept(OldMaid::Card::NumberCard.new(2))
+                              .get_ready.as_drawn
 
-      player = preparing.get_ready
-      drawer = player.as_drawing
-
-      sut = drawer.accept OldMaid::Card::NumberCard.new(3)
+      sut,_ = drawer.draw_from(drawn)
 
       expect(sut).not_to respond_to(:accept)
     end
@@ -140,32 +147,20 @@ RSpec.describe 'Player' do
     end
   end
 
-  it 'can be drawn, draw and be drawn a card' do
-    preparing = OldMaid::Player.prepare(name: 'test')
+  it 'can swap cards with each other player' do
+    player_a = OldMaid::Player.prepare(name: 'a')
+                              .accept(OldMaid::Card::NumberCard.new(1))
+                              .accept(OldMaid::Card::NumberCard.new(2))
+                              .get_ready.as_drawing
+    player_b = OldMaid::Player.prepare(name: 'b')
+                              .accept(OldMaid::Card::NumberCard.new(3))
+                              .accept(OldMaid::Card::NumberCard.new(4))
+                              .get_ready.as_drawn
 
-    preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
-    preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
+    player_a, player_b = player_a.draw_from player_b
+    player_b, player_a = player_b.draw_from player_a
 
-    sut = preparing.get_ready.as_drawn
-    sut = sut.provide.player
-    sut = sut.accept OldMaid::Card::NumberCard.new(3)
-    sut = sut.provide.player
-
-    expect(sut.rest_cards).to eq 1
-  end
-
-  it 'can draw, be drawn and draw a card' do
-    preparing = OldMaid::Player.prepare(name: 'test')
-
-    preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
-    preparing = preparing.accept OldMaid::Card::NumberCard.new(2)
-
-    sut = preparing.get_ready.as_drawing
-    sut = sut.accept OldMaid::Card::NumberCard.new(3)
-    sut = sut.provide.player
-    sut = sut.accept OldMaid::Card::NumberCard.new(4)
-
-    expect(sut.rest_cards).to eq 3
+    expect([player_a.rest_cards, player_b.rest_cards]).to eq [2, 2]
   end
 
   context 'player\'s hand become empty' do
@@ -183,11 +178,14 @@ RSpec.describe 'Player' do
 
     context 'on draw' do
       it 'player become finished state' do
-        preparing = OldMaid::Player.prepare(name: 'test')
-        preparing = preparing.accept OldMaid::Card::NumberCard.new(1)
+        drawer = OldMaid::Player.prepare(name: 'drawer')
+                   .accept(OldMaid::Card::NumberCard.new(1))
+                   .get_ready.as_drawing
+        drawn = OldMaid::Player.prepare(name: 'drawn')
+                  .accept(OldMaid::Card::NumberCard.new(1))
+                  .get_ready.as_drawn
 
-        drawer = preparing.get_ready.as_drawing
-        sut = drawer.accept OldMaid::Card::NumberCard.new(1)
+        sut,_ = drawer.draw_from drawn
 
         expect(sut.finished?).to be true
       end
