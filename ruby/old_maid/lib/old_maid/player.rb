@@ -52,6 +52,16 @@ module OldMaid
       }
     end
 
+    private def transit_to(next_state, name: self.name, cards_in_hand: self.cards_in_hand)
+      next_state.new(
+        name: name,
+        cards_in_hand: cards_in_hand,
+        event_emitter: event_emitter
+      ).tap do |transited|
+        event_emitter.emit(Event::TRANSIT, self, transited)
+      end
+    end
+
     def on_transit(&handler)
       tap do
         event_emitter.on(Event::TRANSIT, &handler)
@@ -77,17 +87,6 @@ module OldMaid
         event_emitter.on(Event::FINISH, &handler)
       end
     end
-
-    private def transit_to(next_state, name: self.name, cards_in_hand: self.cards_in_hand)
-      next_state.new(
-        name: name,
-        cards_in_hand: cards_in_hand,
-        event_emitter: event_emitter
-      ).tap do |transited|
-        event_emitter.emit(Event::TRANSIT, self, transited)
-      end
-    end
-
     module Event
       GET_READY = 'on_get_ready'
       DUMP = 'on_dump'
