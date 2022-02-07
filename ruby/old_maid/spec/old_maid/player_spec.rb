@@ -111,7 +111,7 @@ RSpec.describe 'Player' do
 
       sut,_ = drawer.draw_from(drawn).to_a
 
-      expect(sut).not_to respond_to(:accept)
+      expect(sut).not_to respond_to(:draw_from)
     end
   end
 
