@@ -27,7 +27,9 @@ module OldMaid
     end
 
     def ==(other)
-      name == other.name
+      name == other.name \
+      && cards_in_hand == other.cards_in_hand \
+      && current == other.current
     end
 
     def rest_cards

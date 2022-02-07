@@ -7,14 +7,18 @@ module OldMaid
         new({})
       end
 
-      private attr_reader :cards
+      protected attr_reader :cards
 
       protected def initialize(cards)
         @cards = cards
       end
 
-      def sample(random:)
-        cards.values.sample(random: random)
+      def ==(other)
+        cards == other.cards
+      end
+
+      def sample
+        cards.values.sample
       end
       def length
         cards.length
