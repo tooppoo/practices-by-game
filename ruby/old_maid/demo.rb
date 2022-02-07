@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './old_maid'
+require_relative './lib/old_maid'
 
 log = []
 
