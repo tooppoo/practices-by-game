@@ -15,6 +15,33 @@ module OldMaid
       @event_emitter = OldMaid::Util::EventEmitter.new
     end
 
+    def play(deck:)
+      dealer = OldMaid::Dealer.new(deck)
+
+      event_emitter.emit(Event::Deal::START)
+      first, *rest = dealer.deal_to(players.shuffle).reject { |p| p.finished? }
+      event_emitter.emit(Event::Deal::FINISH)
+
+      players = [first.as_drawing, *rest.map(&:as_drawn)]
+
+      event_emitter.emit(Event::Play::START, players)
+      last, = __play(players: players)
+      event_emitter.emit(Event::Play::FINISH)
+
+      last
+    end
+
+    private def __play(players:)
+      players_rest = players
+
+      while players_rest.length > 1 do
+        players_rest = Turn.proceed(players_rest)
+      end
+
+      players_rest
+    end
+
+
     def on_deal_start(&handler)
       tap do
         event_emitter.on(Event::Deal::START, &handler)
@@ -35,43 +62,23 @@ module OldMaid
         event_emitter.on(Event::Play::FINISH, &handler)
       end
     end
+  end
 
-    def play(deck:)
-      dealer = OldMaid::Dealer.new(deck)
+  module Turn
+    def self.proceed(players)
+      drawer, drawn, *rest = players
 
-      event_emitter.emit(Event::Deal::START)
-      first, *rest = dealer.deal_to(players.shuffle).reject { |p| p.finished? }
-      event_emitter.emit(Event::Deal::FINISH)
+      card, drawn_after = drawn.provide.to_a
+      drawer_after = drawer.accept card
 
-      players = [first.as_drawing, *rest.map(&:as_drawn)]
+      case [drawer_after, drawn_after]
+      in [OldMaid::Player::State::Drawn, OldMaid::Player::State::Finished]
+        next_player, *_ = [*rest, drawer_after]
 
-      event_emitter.emit(Event::Play::START, players)
-      last, = __play(players: players)
-      event_emitter.emit(Event::Play::FINISH)
-
-      last
-    end
-
-    private def __play(players:)
-      players_mut = players
-
-      while players_mut.length > 1 do
-        drawer, drawn, *rest = players_mut
-
-        card, drawn_after = drawn.provide.to_a
-        drawer_after = drawer.accept card
-
-        case [drawer_after, drawn_after]
-        in [OldMaid::Player::State::Drawn, OldMaid::Player::State::Finished]
-          next_player, *_ = [*rest, drawer_after]
-
-          players_mut = [next_player.skip_drawn, *_]
-        else
-          players_mut = [drawn_after, *rest, drawer_after].reject { |p| p.finished? }
-        end
+        [next_player.skip_drawn, *_]
+      else
+        [drawn_after, *rest, drawer_after].reject { |p| p.finished? }
       end
-
-      players_mut
     end
   end
 
