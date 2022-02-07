@@ -71,7 +71,7 @@ RSpec.describe 'Player' do
       OldMaid::Player.prepare(name: 'drawer')
                      .accept(OldMaid::Card::NumberCard.new(1))
                      .accept(OldMaid::Card::NumberCard.new(2))
-                     .get_ready.as_drawing
+                     .get_ready.as_drawer
     }
 
     describe 'draw a card' do
@@ -106,7 +106,7 @@ RSpec.describe 'Player' do
     it 'can not draw a card twice in a row' do
       drawer = OldMaid::Player.prepare(name: 'drawer')
                               .accept(OldMaid::Card::NumberCard.new(1))
-                              .get_ready.as_drawing
+                              .get_ready.as_drawer
       drawn = OldMaid::Player.prepare(name: 'drawn')
                               .accept(OldMaid::Card::NumberCard.new(1))
                               .accept(OldMaid::Card::NumberCard.new(2))
@@ -151,7 +151,7 @@ RSpec.describe 'Player' do
     player_a = OldMaid::Player.prepare(name: 'a')
                               .accept(OldMaid::Card::NumberCard.new(1))
                               .accept(OldMaid::Card::NumberCard.new(2))
-                              .get_ready.as_drawing
+                              .get_ready.as_drawer
     player_b = OldMaid::Player.prepare(name: 'b')
                               .accept(OldMaid::Card::NumberCard.new(3))
                               .accept(OldMaid::Card::NumberCard.new(4))
@@ -180,7 +180,7 @@ RSpec.describe 'Player' do
       it 'player become finished state' do
         drawer = OldMaid::Player.prepare(name: 'drawer')
                    .accept(OldMaid::Card::NumberCard.new(1))
-                   .get_ready.as_drawing
+                   .get_ready.as_drawer
         drawn = OldMaid::Player.prepare(name: 'drawn')
                   .accept(OldMaid::Card::NumberCard.new(1))
                   .get_ready.as_drawn

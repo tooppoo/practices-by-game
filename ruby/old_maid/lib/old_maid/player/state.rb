@@ -44,8 +44,8 @@ module OldMaid
           super
         end
 
-        def as_drawing
-          transit_to Drawing
+        def as_drawer
+          transit_to Drawer
         end
 
         def as_drawn
@@ -53,7 +53,7 @@ module OldMaid
         end
       end
 
-      class Drawing < Player
+      class Drawer < Player
         include Acceptable
 
         private :accept
@@ -81,7 +81,7 @@ module OldMaid
         end
 
         def skip_drawn
-          transit_to Drawing
+          transit_to Drawer
         end
 
         def provide(randomizer = Random.new)
@@ -94,7 +94,7 @@ module OldMaid
           next_state = if cards_after_drawn.empty?
                          Finished
                        else
-                         Drawing
+                         Drawer
                        end
           player = transit_to next_state, cards_in_hand: cards_after_drawn
 

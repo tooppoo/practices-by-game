@@ -22,7 +22,7 @@ module OldMaid
       first, *rest = dealer.deal_to(players.shuffle).reject { |p| p.finished? }
       event_emitter.emit(Event::Deal::FINISH)
 
-      players = [first.as_drawing, *rest.map(&:as_drawn)]
+      players = [first.as_drawer, *rest.map(&:as_drawn)]
 
       event_emitter.emit(Event::Play::START, players)
       last, = __play(players: players)
