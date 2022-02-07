@@ -38,7 +38,7 @@ module OldMaid
       end
 
       class GetReady < Player
-        protected def initialize(name:, cards_in_hand:, event_emitter:)
+        protected def initialize(name:, cards_in_hand:, draw_strategy:, event_emitter:)
           raise ArgumentError.new("when a player be get-ready, the player must have at least one card") if cards_in_hand.empty?
 
           super
@@ -62,16 +62,6 @@ module OldMaid
           card, drawn_after = drawn.provide(at: draw_strategy.pick_from(drawn)).to_a
 
           OldMaid::Util::Tuple.new((accept card), drawn_after)
-        end
-
-        private def draw_strategy
-          @strategy ||= Struct.new('Random') do
-            def pick_from(drawn)
-              drawn.providable_range.to_a.sample
-            end
-          end
-
-          @strategy.new
         end
 
         private def state_after_accept(next_cards:)
@@ -111,7 +101,7 @@ module OldMaid
       end
 
       class Finished < Player
-        protected def initialize(name:, cards_in_hand:, event_emitter:)
+        protected def initialize(name:, cards_in_hand:, draw_strategy:, event_emitter:)
           raise ArgumentError.new("when a player finished, the player can not any cards") unless cards_in_hand.empty?
 
           event_emitter.emit(Event::FINISH, self)

@@ -2,20 +2,21 @@
 
 module OldMaid
   class Player
-    def self.prepare(name:)
+    def self.prepare(name:, draw_strategy: OldMaid::Player::Strategy::DrawRandom.instance)
       new(
         name: name,
         cards_in_hand: CardsInHand.empty,
-        event_emitter: OldMaid::Util::EventEmitter.new
+        draw_strategy: draw_strategy,
+        event_emitter: OldMaid::Util::EventEmitter.new,
       ).instance_eval do
         transit_to State::Preparing
       end
     end
 
     attr_reader :name, :cards_in_hand
-    private attr_reader :event_emitter
+    private attr_reader :draw_strategy, :event_emitter
 
-    protected def initialize(name:, cards_in_hand:, event_emitter:)
+    protected def initialize(name:, cards_in_hand:, draw_strategy:, event_emitter:)
       invalid_chars = %W[< > # $ % \\ \t \n \u0000]
 
       raise ArgumentError.new("invalid characters contained") if invalid_chars.any? { |c| name.include? c }
@@ -23,6 +24,7 @@ module OldMaid
 
       @name = name
       @cards_in_hand = cards_in_hand
+      @draw_strategy = draw_strategy
       @event_emitter = event_emitter
     end
 
@@ -56,6 +58,7 @@ module OldMaid
       next_state.new(
         name: name,
         cards_in_hand: cards_in_hand,
+        draw_strategy: draw_strategy,
         event_emitter: event_emitter
       ).tap do |transited|
         event_emitter.emit(Event::TRANSIT, self, transited)
@@ -98,5 +101,6 @@ module OldMaid
 
     require_relative './player/cards_in_hand'
     require_relative './player/state'
+    require_relative './player/strategy'
   end
 end
