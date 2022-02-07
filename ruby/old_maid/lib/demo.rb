@@ -28,9 +28,9 @@ begin
   #   [1, 1, 2, 2, 3, 3].map { |n| OldMaid::Card::NumberCard.new(n) }.push OldMaid::Card::Joker.instance
   # end
 
-  puts sut.play(deck: deck).name
+  loser = sut.play(deck: deck)
+
+  puts log, "#{loser.name} is loser"
 rescue => ex
-  puts ex, ex.backtrace
-ensure
-  puts log
+  puts ex, ex.backtrace, log
 end
