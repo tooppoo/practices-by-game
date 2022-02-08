@@ -61,11 +61,21 @@ RSpec.describe 'Game' do
                              .get_ready.as_drawn,
               OldMaid::Player.prepare(name: 'c')
                              .accept(OldMaid::Card::Joker.instance)
+                             .accept(OldMaid::Card::NumberCard.new(1))
+                             .get_ready.as_drawn,
+              OldMaid::Player.prepare(name: 'd')
+                             .accept(OldMaid::Card::Joker.instance)
+                             .accept(OldMaid::Card::NumberCard.new(1))
                              .get_ready.as_drawn,
             ],
             [
               OldMaid::Player.prepare(name: 'c')
                              .accept(OldMaid::Card::Joker.instance)
+                             .accept(OldMaid::Card::NumberCard.new(1))
+                             .get_ready.as_drawer,
+              OldMaid::Player.prepare(name: 'd')
+                             .accept(OldMaid::Card::Joker.instance)
+                             .accept(OldMaid::Card::NumberCard.new(1))
                              .get_ready.as_drawn,
             ],
           ],
@@ -131,6 +141,14 @@ RSpec.describe 'Game' do
       with_them do
         it "should #{params[:expected]}" do
           expect(OldMaid::Game::Turn.proceed(players_before)).to eq players_after
+        end
+
+        it "can continue" do
+          expect {
+            OldMaid::Game::Turn.proceed(
+              OldMaid::Game::Turn.proceed(players_before)
+            )
+          }.not_to raise_error
         end
       end
     end

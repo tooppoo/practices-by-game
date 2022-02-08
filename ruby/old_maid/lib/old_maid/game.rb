@@ -43,18 +43,20 @@ module OldMaid
 
     module Turn
       def self.proceed(players)
+        return players if players.length < 2
+
         drawer, drawn, *rest = players
 
-        drawer_after, drawn_after = drawer.draw_from(drawn).to_a
+        proceed_players = case drawer.draw_from(drawn).to_a
+                          in [_ => drawer_after, OldMaid::Player::State::Finished => drawn_after]
+                            next_player, *_ = [*rest, drawer_after]
 
-        case [drawer_after, drawn_after]
-        in [OldMaid::Player::State::Drawn, OldMaid::Player::State::Finished]
-          next_player, *_ = [*rest, drawer_after]
+                            [next_player.skip_drawn, *_]
+                          in [_ => drawer_after, _ => drawn_after]
+                            [drawn_after, *rest, drawer_after]
+                          end
 
-          [next_player.skip_drawn, *_]
-        else
-          [drawn_after, *rest, drawer_after].reject { |p| p.finished? }
-        end
+        proceed_players.reject { |p| p.finished? }
       end
     end
 
