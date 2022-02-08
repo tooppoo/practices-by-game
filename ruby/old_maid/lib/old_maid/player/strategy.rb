@@ -5,6 +5,25 @@ require 'singleton'
 module OldMaid
   class Player
     module Strategy
+      class SelectViaStdInput
+        include Singleton
+
+        def pick_from(drawn)
+          candidates = drawn.providable_range.to_a
+
+          while true
+             puts "#{drawn.name} provide #{candidates.join(', ')}."
+             puts "you should draw a card from #{drawn.name}. type number of candidate:"
+             input = gets.chomp.to_i
+
+             if candidates.include? input
+               break input
+             else
+               puts "#{input} is not provided. retry select."
+             end
+           end
+        end
+      end
       class DrawRandom
         include Singleton
 
