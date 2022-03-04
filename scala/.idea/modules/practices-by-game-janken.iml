@@ -6,6 +6,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../janken">
       <sourceFolder url="file://$MODULE_DIR$/../../janken/src/main/scala" isTestSource="false" packagePrefix="philomagi.practices_by_game.janken" />
+      <sourceFolder url="file://$MODULE_DIR$/../../janken/src/test/scala" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/../../janken/target" />
     </content>
     <orderEntry type="inheritedJdk" />
