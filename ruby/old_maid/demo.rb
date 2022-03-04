@@ -6,7 +6,7 @@ log = []
 
 begin
   players = [
-    OldMaid::Player.prepare(name: 'player-1', draw_strategy: OldMaid::Player::Strategy::SelectViaStdInput.instance),
+    OldMaid::Player.prepare(name: 'player-1'),
     OldMaid::Player.prepare(name: 'player-2', draw_strategy: OldMaid::Player::Strategy::AlwaysHead.instance),
     OldMaid::Player.prepare(name: 'player-3', draw_strategy: OldMaid::Player::Strategy::AlwaysLast.instance),
     OldMaid::Player.prepare(name: 'player-4', draw_strategy: OldMaid::Player::Strategy::AlwaysCenter.instance),
