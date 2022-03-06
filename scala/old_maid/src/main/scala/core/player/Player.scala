@@ -6,7 +6,7 @@ import core.player.Phase.Preparing
 
 class Player private[player] (
                                val name: Player.Name,
-                               val strategy: Strategy = new Strategy.SelectRandom,
+                               val strategy: Strategy,
                                private val cardsInHand: Seq[Card]
                              ) {
   lazy val cards: this.CardsInHand = CardsInHand(cardsInHand)
@@ -35,7 +35,7 @@ class Player private[player] (
     }
 
     def provide(candidate: Candidate): (Card, CardsInHand) = {
-      require(cards.nonEmpty)
+      require(cards.nonEmpty, "can not provide any card from empty cards")
 
       val aCard = cards(candidate.at)
 
@@ -55,14 +55,17 @@ class Player private[player] (
     def candidates: Seq[Candidate] =
       (0 until count)
         .map(Candidate)
-        .ensuring(_.length == count)
+        .ensuring(
+          _.length == count,
+          "must not provide more candidates than cards in hand and must provide candidates of whole cards"
+        )
 
     def toSeq: Seq[Card] = cards
 
     override def toString: String = cards.toString()
 
     case class Candidate(at: Int) {
-      require(0 <= at && at < count)
+      require(0 <= at && at < count, "candidate must exist within cards-in-hand")
     }
   }
 }
@@ -71,6 +74,8 @@ object Player {
   = new Player(name, strategy, Seq.empty) with Preparing
 
   case class Name(name: String) {
-    require(name.nonEmpty)
+    require(name.nonEmpty, "player name must not be empty")
+
+    override def toString: String = name
   }
 }

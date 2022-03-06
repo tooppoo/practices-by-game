@@ -5,19 +5,20 @@ import core.card.Card
 
 trait Phase { this: Player =>
   val name: Player.Name
+  val cards: Player#CardsInHand
 }
 object Phase {
   trait Preparing extends Phase { this: Player =>
     def accept(aCard: Card): Preparing =
-      new Player(name = name, cardsInHand = cards.insert(aCard).toSeq) with Preparing
+      new Player(name, strategy, cardsInHand = cards.insert(aCard).toSeq) with Preparing
 
     def getReady: Preparing.NextOfGetReady = if (cards.isEmpty) {
       Left(
-        new Player(name, cardsInHand = cards.toSeq.ensuring(_.isEmpty)) with Finish
+        new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.isEmpty)) with Finish
       )
     } else {
       Right(
-        new Player(name, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with GetReady
+        new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with GetReady
       )
     }
   }
@@ -25,28 +26,28 @@ object Phase {
     type NextOfGetReady = Either[Finish, GetReady]
   }
 
-  trait GetReady extends Phase { this: Player =>
+  trait GetReady extends Phase with Behavior.CanGiveUp { this: Player =>
     require(cards.nonEmpty)
 
     def asDrawn: Drawn =
-      new Player(name, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawn
+      new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawn
 
     def asDrawer: Drawer =
-      new Player(name, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawer
+      new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawer
   }
 
-  trait Drawn extends Phase { this: Player =>
+  trait Drawn extends Phase with Behavior.CanGiveUp { this: Player =>
     require(cards.nonEmpty)
 
     def provide(candidate: cards.Candidate): (Card, Drawn.NextOfDrawn) = {
       val (aCard, rest) = cards.provide(candidate)
       val next = if (rest.isEmpty) {
         Left(
-          new Player(name, cardsInHand = rest.toSeq.ensuring(_.isEmpty)) with Finish
+          new Player(name, strategy, cardsInHand = rest.toSeq.ensuring(_.isEmpty)) with Finish
         )
       } else {
         Right(
-          new Player(name, cardsInHand = rest.toSeq.ensuring(_.nonEmpty)) with Drawer
+          new Player(name, strategy, cardsInHand = rest.toSeq.ensuring(_.nonEmpty)) with Drawer
         )
       }
 
@@ -55,13 +56,13 @@ object Phase {
 
     def candidates: Seq[cards.Candidate] = cards.candidates
 
-    def skip: Drawer = new Player(name, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawer
+    def skip: Drawer = new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawer
   }
   object Drawn {
     type NextOfDrawn = Either[Finish, Drawer]
   }
 
-  trait Drawer extends Phase { this: Player =>
+  trait Drawer extends Phase with Behavior.CanGiveUp { this: Player =>
     require(cards.nonEmpty)
 
     def drawFrom(drawn: Drawn): (Drawer.NextOfDrawer, Drawn.NextOfDrawn) = {
@@ -71,11 +72,11 @@ object Phase {
       val nextCardsInHand = cards.insert(aCard)
       val nextOfDrawer = if (nextCardsInHand.isEmpty) {
         Left(
-          new Player(name, cardsInHand = nextCardsInHand.toSeq.ensuring(_.isEmpty)) with Finish
+          new Player(name, strategy, cardsInHand = nextCardsInHand.toSeq.ensuring(_.isEmpty)) with Finish
         )
       } else {
         Right(
-          new Player(name, cardsInHand = nextCardsInHand.toSeq.ensuring(_.nonEmpty)) with Drawn
+          new Player(name, strategy, cardsInHand = nextCardsInHand.toSeq.ensuring(_.nonEmpty)) with Drawn
         )
       }
 
@@ -88,5 +89,15 @@ object Phase {
 
   trait Finish extends Phase { this: Player =>
     require(cards.isEmpty)
+  }
+
+  object Behavior {
+    trait CanGiveUp { this: Player =>
+      def giveUp: Finish = {
+        require(cards.toSeq == Seq(Card.Joker))
+
+        new Player(name, strategy, cardsInHand = Seq.empty) with Finish
+      }
+    }
   }
 }
