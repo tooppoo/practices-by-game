@@ -51,11 +51,9 @@ object OldMaid {
 
         val (getReadies, alreadyFinished) = dealtPlayers.map(_.getReady).foldLeft(
           (Seq.empty[GetReady], Seq.empty[Finish])
-        ) { (xs, p) =>
-          p match {
-            case Right(getReady) => (xs._1 :+ getReady, xs._2)
-            case Left(finished) => (xs._1, xs._2 :+ finished)
-          }
+        ) {
+          case ((getReadies, alreadyFinished), Right(p)) => (getReadies :+ p, alreadyFinished)
+          case ((getReadies, alreadyFinished), Left(p)) => (getReadies, alreadyFinished :+ p)
         }
 
         val result = getReadies match {
