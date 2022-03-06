@@ -5,13 +5,18 @@ import org.scalatest.funspec.AnyFunSpec
 
 class DeckTest extends AnyFunSpec {
   describe("draw a card") {
-    it("should provide a drawn card and rest of deck") {
-      val deck = Deck.full
-      val (drawn, rest) = deck.drawn
+    describe("some cards left after") {
+      it("should provide a drawn card and Some deck") {
+        val deck = Deck.full
 
-      assert((drawn, rest.count) == (Card.NumberCard(Card.NumberCard.Number(1)), 52))
+        deck.drawn match {
+          case (drawn, Some(_)) => assert(drawn == Card.NumberCard(Card.NumberCard.Number(1)))
+          case _ => fail()
+        }
+      }
     }
-    it("should mutate receiver deck") {
+
+    it("should not mutate receiver deck") {
       val deck = Deck.full
       val _ = deck.drawn
 
