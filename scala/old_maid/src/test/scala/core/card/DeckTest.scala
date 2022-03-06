@@ -1,7 +1,7 @@
+package philomagi.practices_by_game.old_maid
 package core.card
 
 import org.scalatest.funspec.AnyFunSpec
-import philomagi.practices_by_game.janken.core.card.{Card, Deck}
 
 class DeckTest extends AnyFunSpec {
   describe("draw a card") {

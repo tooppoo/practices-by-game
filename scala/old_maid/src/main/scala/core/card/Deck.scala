@@ -1,4 +1,4 @@
-package philomagi.practices_by_game.janken
+package philomagi.practices_by_game.old_maid
 package core.card
 
 import scala.util.Random

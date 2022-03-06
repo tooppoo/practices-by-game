@@ -1,11 +1,12 @@
+package philomagi.practices_by_game.old_maid
 package core.player
+
+import core.card.Card
+import core.player.Phase.{Drawer, Drawn, Finish, GetReady}
 
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.prop.TableDrivenPropertyChecks
-import philomagi.practices_by_game.janken.core.card.Card
-import philomagi.practices_by_game.janken.core.player.Phase.{Drawer, Drawn, Finish, GetReady}
-import philomagi.practices_by_game.janken.core.player.Player
 
 class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
   describe("Preparing") {

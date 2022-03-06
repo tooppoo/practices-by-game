@@ -1,9 +1,9 @@
+package philomagi.practices_by_game.old_maid
 package core.card
 
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.prop.TableDrivenPropertyChecks
-import philomagi.practices_by_game.janken.core.card.Card
 
 class CardTest extends AnyFunSpec with TableDrivenPropertyChecks {
   describe("compare") {

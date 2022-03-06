@@ -5,19 +5,19 @@ ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / libraryDependencies ++= Dependencies.ScalaTest.dependencies
 
 lazy val root = (project in file("."))
-  .aggregate(janken)
+  .aggregate(oldMaid)
   .settings(
     ProjectConfig.RootProject.toSettings
   )
 
-lazy val janken = (project in file("./janken"))
+lazy val oldMaid = (project in file("./old_maid"))
   .configure(prj => {
-    val conf = ProjectConfig.SubProject("janken")
+    val conf = ProjectConfig.SubProject("old_maid")
     val jigConfig = JigConfig(prj)
 
     prj.settings(
       conf.toSettings,
       jigConfig.defaultSettings,
-      jig / jigPatternDomain := s".+\\.janken\\..+"
+      jig / jigPatternDomain := s".+\\.old_maid\\..+"
     )
   })

@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/practices-by-game.iml" filepath="$PROJECT_DIR$/.idea/modules/practices-by-game.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/practices-by-game-build.iml" filepath="$PROJECT_DIR$/.idea/modules/practices-by-game-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/practices-by-game-janken.iml" filepath="$PROJECT_DIR$/.idea/modules/practices-by-game-janken.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/practices-by-game-old_maid.iml" filepath="$PROJECT_DIR$/.idea/modules/practices-by-game-old_maid.iml" />
     </modules>
   </component>
 </project>

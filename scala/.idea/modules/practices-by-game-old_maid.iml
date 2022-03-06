@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id="janken [file:/Users/apple/personal/janken/scala/]" external.linked.project.path="$MODULE_DIR$/../../janken" external.root.project.path="$MODULE_DIR$/../.." external.system.id="SBT" type="JAVA_MODULE" version="4">
+<module external.linked.project.id="oldMaid [file:/Users/apple/personal/janken/scala/]" external.linked.project.path="$MODULE_DIR$/../../old_maid" external.root.project.path="$MODULE_DIR$/../.." external.system.id="SBT" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
-    <output url="file://$MODULE_DIR$/../../janken/target/scala-2.13/classes" />
-    <output-test url="file://$MODULE_DIR$/../../janken/target/scala-2.13/test-classes" />
+    <output url="file://$MODULE_DIR$/../../old_maid/target/scala-2.13/classes" />
+    <output-test url="file://$MODULE_DIR$/../../old_maid/target/scala-2.13/test-classes" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../janken">
-      <sourceFolder url="file://$MODULE_DIR$/../../janken/src/main/scala" isTestSource="false" packagePrefix="philomagi.practices_by_game.janken" />
-      <sourceFolder url="file://$MODULE_DIR$/../../janken/src/test/scala" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/../../janken/target" />
+    <content url="file://$MODULE_DIR$/../../old_maid">
+      <sourceFolder url="file://$MODULE_DIR$/../../old_maid/src/main/scala" isTestSource="false" packagePrefix="philomagi.practices_by_game.old_maid" />
+      <sourceFolder url="file://$MODULE_DIR$/../../old_maid/src/test/scala" isTestSource="true" packagePrefix="philomagi.practices_by_game.old_maid" />
+      <excludeFolder url="file://$MODULE_DIR$/../../old_maid/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
