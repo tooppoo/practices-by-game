@@ -9,15 +9,27 @@ class Player private[player] (
                                val strategy: Strategy = new Strategy.SelectRandom,
                                private val cardsInHand: Seq[Card]
                              ) {
-  lazy val cards: this.CardsInHand = new CardsInHand(cardsInHand)
+  lazy val cards: this.CardsInHand = CardsInHand(cardsInHand)
 
-  class CardsInHand(private val cards: Seq[Card]) {
+  override def equals(obj: Any): Boolean = obj match {
+    case other: Player => name == other.name && cards == other.cards
+    case _ => false
+  }
+
+  override def toString: String = (name, cardsInHand).toString()
+
+  case class CardsInHand(private val cards: Seq[Card]) {
+    override def equals(obj: Any): Boolean = obj match {
+      case other: Player#CardsInHand => cards == other.cards
+      case _ => false
+    }
+
     def insert(aCard: Card): CardsInHand = if (cards.contains(aCard)) {
-      new CardsInHand(
+      copy(
         cards.filterNot(c => c == aCard)
       )
     } else {
-      new CardsInHand(
+      copy(
         cards :+ aCard
       )
     }
@@ -29,7 +41,7 @@ class Player private[player] (
 
       (
         aCard,
-        new CardsInHand(
+        copy(
           cards.filterNot(c => c == aCard)
         )
       )
@@ -40,20 +52,18 @@ class Player private[player] (
     def isEmpty: Boolean = cards.isEmpty
     def nonEmpty: Boolean = !isEmpty
 
-    def candidates: Seq[this.Candidate] =
+    def candidates: Seq[Candidate] =
       (0 until count)
         .map(Candidate)
         .ensuring(_.length == count)
 
     def toSeq: Seq[Card] = cards
 
+    override def toString: String = cards.toString()
+
     case class Candidate(at: Int) {
       require(0 <= at && at < count)
     }
-  }
-
-  object CardsInHand {
-    def empty = new CardsInHand(Seq.empty)
   }
 }
 object Player {

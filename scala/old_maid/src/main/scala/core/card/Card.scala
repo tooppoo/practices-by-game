@@ -2,7 +2,7 @@ package philomagi.practices_by_game.old_maid
 package core.card
 
 sealed trait Card {
-  def ==(other: Card): Boolean = (this, other) match {
+  override def equals(obj: Any): Boolean = (this, obj) match {
     case (Card.NumberCard(thisNumber), Card.NumberCard(otherNumber)) => thisNumber == otherNumber
     case _ => false
   }

@@ -3,8 +3,11 @@ package core.player
 
 import core.card.Card
 
+trait Phase { this: Player =>
+  val name: Player.Name
+}
 object Phase {
-  trait Preparing { this: Player =>
+  trait Preparing extends Phase { this: Player =>
     def accept(aCard: Card): Preparing =
       new Player(name = name, cardsInHand = cards.insert(aCard).toSeq) with Preparing
 
@@ -22,7 +25,7 @@ object Phase {
     type NextOfGetReady = Either[Finish, GetReady]
   }
 
-  trait GetReady { this: Player =>
+  trait GetReady extends Phase { this: Player =>
     require(cards.nonEmpty)
 
     def asDrawn: Drawn =
@@ -32,7 +35,7 @@ object Phase {
       new Player(name, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawer
   }
 
-  trait Drawn { this: Player =>
+  trait Drawn extends Phase { this: Player =>
     require(cards.nonEmpty)
 
     def provide(candidate: cards.Candidate): (Card, Drawn.NextOfDrawn) = {
@@ -58,7 +61,7 @@ object Phase {
     type NextOfDrawn = Either[Finish, Drawer]
   }
 
-  trait Drawer { this: Player =>
+  trait Drawer extends Phase { this: Player =>
     require(cards.nonEmpty)
 
     def drawFrom(drawn: Drawn): (Drawer.NextOfDrawer, Drawn.NextOfDrawn) = {
@@ -83,9 +86,7 @@ object Phase {
     type NextOfDrawer = Either[Finish, Drawn]
   }
 
-  trait Finish { this: Player =>
+  trait Finish extends Phase { this: Player =>
     require(cards.isEmpty)
-
-    override val name: Player.Name = this.name
   }
 }

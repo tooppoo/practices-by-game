@@ -4,6 +4,8 @@ package core.card
 import core.util.Shuffle.Shuffle
 
 class Deck private (private val cards: Seq[Card]) {
+  require(cards.nonEmpty)
+
   def drawn: (Card, Option[Deck]) = cards match {
     case drawn :: Nil => (drawn, None)
     case drawn :: rest => (drawn, Some(new Deck(rest)))
@@ -14,7 +16,7 @@ class Deck private (private val cards: Seq[Card]) {
   def shuffle(implicit shuffle: Shuffle[Card]): Deck = new Deck(shuffle(cards))
 }
 object Deck {
-  def full: Deck = new Deck(
+  lazy val full: Deck = new Deck(
     Seq(
       (1 to 13).map(Card.NumberCard.Number).map(Card.NumberCard(_)),
       (1 to 13).map(Card.NumberCard.Number).map(Card.NumberCard(_)),
