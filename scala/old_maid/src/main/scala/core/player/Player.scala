@@ -19,6 +19,8 @@ class Player private[player] (
   override def toString: String = (name, cardsInHand).toString()
 
   case class CardsInHand(private val cards: Seq[Card]) {
+    def notContain(aCard: Card): Boolean = !cards.contains(aCard)
+
     override def equals(obj: Any): Boolean = obj match {
       case other: Player#CardsInHand => cards == other.cards
       case _ => false

@@ -38,7 +38,7 @@ class CardTest extends AnyFunSpec with TableDrivenPropertyChecks {
         (
           Card.Joker,
           Card.Joker,
-          false,
+          true,
         ),
       )
 

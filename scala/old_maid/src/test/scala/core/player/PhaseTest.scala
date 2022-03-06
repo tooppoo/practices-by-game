@@ -21,7 +21,7 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
           )
 
         player.getReady match {
-          case Left(phase) => phase shouldBe a [Finish]
+          case Left(phase) => phase shouldBe a[Finish]
           case _ => fail("should be left")
         }
       }
@@ -34,7 +34,7 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
           )
 
         player.getReady match {
-          case Right(phase) => phase shouldBe a [GetReady]
+          case Right(phase) => phase shouldBe a[GetReady]
           case _ => fail("should be right")
         }
       }
@@ -44,46 +44,81 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
   describe("Drawn") {
     describe("after drawn") {
       describe("any card not left in the hand") {
-        it("should transit to Finish phase") {
-          val player = Player(Player.Name("p"))
-            .accept(
-              Card.NumberCard(Card.NumberCard.Number(1))
-            )
+        val testCases = Table(
+          "last card in hand",
+          Card.NumberCard(Card.NumberCard.Number(1)),
+          Card.Joker
+        )
 
-          for {
-            ready <- player.getReady
-          } {
-            val drawn = ready.asDrawn
-            val c = drawn.candidates.head
-            val (_, after) = drawn.provide(c)
+        forAll(testCases) { lastCard =>
+          describe(s"last card in hand is $lastCard") {
+            it("should transit to Finish phase") {
+              val player = Player(Player.Name("p")).accept(lastCard)
 
-            after match {
-              case Left(phase) => phase shouldBe a [Finish]
-              case _ => fail("should be right")
+              for {
+                ready <- player.getReady
+              } {
+                val drawn = ready.asDrawn
+                val c = drawn.candidates.head
+                val (_, after) = drawn.provide(c)
+
+                after match {
+                  case Left(phase) => phase shouldBe a[Finish]
+                  case _ => fail("should be right")
+                }
+              }
             }
           }
         }
       }
+
       describe("some cards left in the hand") {
-        it("should transit to Drawer phase after drawn") {
-          val player = Player(Player.Name("p"))
+        val testCases = Table(
+          "player",
+          Player(Player.Name("p"))
             .accept(
               Card.NumberCard(Card.NumberCard.Number(1))
             )
             .accept(
               Card.NumberCard(Card.NumberCard.Number(2))
-            )
+            ),
+          Player(Player.Name("p"))
+            .accept(Card.Joker)
+            .accept(
+              Card.NumberCard(Card.NumberCard.Number(2))
+            ),
+        )
 
-          for {
-            ready <- player.getReady
-          } {
-            val drawn = ready.asDrawn
-            val c = drawn.candidates.head
-            val (_, after) = drawn.provide(c)
+        forAll(testCases) { player =>
+          describe(s"player is $player") {
+            it("should transit to Drawer phase after drawn") {
+              for {
+                ready <- player.getReady
+              } {
+                val drawn = ready.asDrawn
+                val c = drawn.candidates.head
+                val (_, after) = drawn.provide(c)
 
-            after match {
-              case Right(phase) => phase shouldBe a [Drawer]
-              case _ => fail("should be left")
+                after match {
+                  case Right(phase) => phase shouldBe a[Drawer]
+                  case _ => fail("should be left")
+                }
+              }
+            }
+
+            it("should not have provided card in hand") {
+              for {
+                ready <- player.getReady
+              } {
+                val drawn = ready.asDrawn
+                val c = drawn.candidates.head
+                val (aCard, after) = drawn.provide(c)
+
+                after match {
+                  case Right(phase) => assert(phase.cards.notContain(aCard))
+                  case _ => fail("should be left")
+                }
+              }
             }
           }
         }
@@ -100,7 +135,7 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
         for {
           ready <- player.getReady
         } {
-          ready.asDrawn.skip shouldBe a [Drawer]
+          ready.asDrawn.skip shouldBe a[Drawer]
         }
       }
     }
@@ -126,7 +161,7 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
             val (drawerNext, _) = drawerReady.asDrawer.drawFrom(drawnReady.asDrawn)
 
             drawerNext match {
-              case Left(phase) => phase shouldBe a [Finish]
+              case Left(phase) => phase shouldBe a[Finish]
             }
           }
         }
@@ -152,7 +187,7 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
             val (drawerNext, _) = drawerReady.asDrawer.drawFrom(drawnReady.asDrawn)
 
             drawerNext match {
-              case Right(phase) => phase shouldBe a [Drawn]
+              case Right(phase) => phase shouldBe a[Drawn]
             }
           }
         }

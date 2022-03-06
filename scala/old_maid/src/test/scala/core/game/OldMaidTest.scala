@@ -71,6 +71,17 @@ class OldMaidTest extends AnyFunSpec with TableDrivenPropertyChecks {
               .getReady,
             Seq("drawn", "drawer"),
           ),
+          (
+            "both could not finish at once",
+            Player(Player.Name("p1"), OldMaidTest.AlwaysDrawFirstStrategy)
+              .accept(Card.NumberCard(Card.NumberCard.Number(1)))
+              .getReady,
+            Player(Player.Name("p2"), OldMaidTest.AlwaysDrawFirstStrategy)
+              .accept(Card.Joker)
+              .accept(Card.NumberCard(Card.NumberCard.Number(1)))
+              .getReady,
+            Seq("p2", "p1"),
+          ),
         )
 
         forAll(testCases) { (caseName, drawerReady, drawnReady, expectedOrder) =>
