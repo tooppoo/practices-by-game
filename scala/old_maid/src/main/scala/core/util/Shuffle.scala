@@ -3,10 +3,13 @@ package core.util
 
 import scala.util.Random
 
+trait Shuffle {
+  def shuffle[T](xs: Seq[T]): Seq[T]
+}
 object Shuffle {
-  type Shuffle[T] = Seq[T] => Seq[T]
-
   object Preset {
-    def randomShuffle[T](implicit randomizer: Random): Shuffle[T] = randomizer.shuffle(_)
+    class RandomShuffle(random: Random) extends Shuffle {
+      override def shuffle[T](xs: Seq[T]): Seq[T] = random.shuffle(xs)
+    }
   }
 }

@@ -1,7 +1,7 @@
 package philomagi.practices_by_game.old_maid
 package core.card
 
-import core.util.Shuffle.Shuffle
+import core.util.Shuffle
 
 class Deck private (private val cards: Seq[Card]) {
   require(cards.nonEmpty)
@@ -13,7 +13,7 @@ class Deck private (private val cards: Seq[Card]) {
 
   def count: Int = cards.length
 
-  def shuffle(implicit shuffle: Shuffle[Card]): Deck = new Deck(shuffle(cards))
+  def shuffle(implicit shuffle: Shuffle): Deck = new Deck(shuffle.shuffle(cards))
 }
 object Deck {
   lazy val full: Deck = new Deck(
