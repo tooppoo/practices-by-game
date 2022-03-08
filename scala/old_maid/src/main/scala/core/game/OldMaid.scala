@@ -15,7 +15,7 @@ class OldMaid private[game](
                            )
 
 object OldMaid {
-  def apply(dealer: Dealer, deck: Deck) = new OldMaid(dealer, Seq.empty) with Phase.Preparing
+  def apply(dealer: Dealer) = new OldMaid(dealer, Seq.empty) with Phase.Preparing
 
   object Phase {
     trait Preparing {

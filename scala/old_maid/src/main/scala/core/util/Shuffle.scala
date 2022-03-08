@@ -8,7 +8,7 @@ trait Shuffle {
 }
 object Shuffle {
   object Preset {
-    class RandomShuffle(random: Random) extends Shuffle {
+    case class RandomShuffle(random: Random) extends Shuffle {
       override def shuffle[T](xs: Seq[T]): Seq[T] = random.shuffle(xs)
     }
   }
