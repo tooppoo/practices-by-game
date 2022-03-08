@@ -2,6 +2,8 @@ package philomagi.practices_by_game.old_maid
 package core.player
 
 import core.card.Card
+import core.event.EventBus
+import core.player.Events.DumpCard
 import core.player.Phase.Preparing
 
 class Player private[player] (
@@ -18,6 +20,8 @@ class Player private[player] (
 
   override def toString: String = (name, cardsInHand).toString()
 
+  private lazy val owner = this
+
   case class CardsInHand(private val cards: Seq[Card]) {
     def notContain(aCard: Card): Boolean = !cards.contains(aCard)
 
@@ -27,6 +31,8 @@ class Player private[player] (
     }
 
     def insert(aCard: Card): CardsInHand = if (cards.contains(aCard)) {
+      EventBus.emit(DumpCard(owner, aCard))
+
       copy(
         cards.filterNot(c => c == aCard)
       )

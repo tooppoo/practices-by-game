@@ -2,6 +2,8 @@ package philomagi.practices_by_game.old_maid
 package core.player
 
 import core.card.Card
+import core.event.EventBus
+import core.player.Events.MoveCard
 
 trait Phase { this: Player =>
   val name: Player.Name
@@ -68,6 +70,10 @@ object Phase {
     def drawFrom(drawn: Drawn): (Drawer.NextOfDrawer, Drawn.NextOfDrawn) = {
       val candidate = strategy.selectCandidateFrom(drawn.candidates)
       val (aCard, nextOfDrawn) = drawn.provide(candidate)
+
+      EventBus.emit(
+        MoveCard(from = drawn, to = this, aCard)
+      )
 
       val nextCardsInHand = cards.insert(aCard)
       val nextOfDrawer = if (nextCardsInHand.isEmpty) {

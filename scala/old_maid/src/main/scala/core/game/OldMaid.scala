@@ -2,6 +2,8 @@ package philomagi.practices_by_game.old_maid
 package core.game
 
 import core.card.Deck
+import core.event.EventBus
+import core.game.Events.{GameOver, SetupBegin, SetupFinish}
 import core.game.OldMaid.Phase.Playable.{PlayersOrderByFinishedEarly, process}
 import core.game.OldMaid.Phase.Preparing.Exception.TooLessPlayersException
 import core.player.Phase.{Drawer, Drawn, Finish, GetReady, Preparing => PreparingPlayer}
@@ -47,6 +49,8 @@ object OldMaid {
         val shuffledDeck = deck.shuffle
         val shuffledPlayers = shuffle.shuffle(players)
 
+        EventBus.emit(SetupBegin(shuffledPlayers))
+
         val dealtPlayers = dealer.deal(from = shuffledDeck, to = shuffledPlayers)
 
         val (getReadies, alreadyFinished) = dealtPlayers.map(_.getReady).foldLeft(
@@ -55,6 +59,8 @@ object OldMaid {
           case ((getReadies, alreadyFinished), Right(p)) => (getReadies :+ p, alreadyFinished)
           case ((getReadies, alreadyFinished), Left(p)) => (getReadies, alreadyFinished :+ p)
         }
+
+        EventBus.emit(SetupFinish(getReadies, alreadyFinished))
 
         val result = getReadies match {
           case last :: Nil => alreadyFinished :+ last.giveUp
@@ -65,6 +71,8 @@ object OldMaid {
             alreadyFinished
           )
         }
+
+        EventBus.emit(GameOver(result))
 
         result.ensuring(_.length == players.length)
       }

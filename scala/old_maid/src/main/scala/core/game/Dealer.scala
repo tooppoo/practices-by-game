@@ -2,7 +2,9 @@ package philomagi.practices_by_game.old_maid
 package core.game
 
 import core.card.{Card, Deck}
+import core.event.EventBus
 import core.game.Dealer.PlayerWithOrder
+import core.game.Events.Deal
 import core.player.Phase.Preparing
 
 import scala.annotation.tailrec
@@ -24,6 +26,8 @@ class Dealer {
     (deckMaybeEmpty, to) match {
       case (Some(deck), nextPlayer :: restPlayer) =>
         val (aCard, nextDeck) = deck.drawn
+
+        EventBus.emit(Deal(aCard, to = nextPlayer.player))
 
         __deal(nextDeck, restPlayer :+ nextPlayer.accept(aCard))
       case _ => to
