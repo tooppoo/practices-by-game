@@ -4,7 +4,7 @@ import core.card.Deck
 import core.event.EventBus
 import core.game.Events.{Deal, GameOver, SetupBegin, SetupFinish}
 import core.game.{Dealer, OldMaid}
-import core.player.Events.{DumpCard, MoveCard}
+import core.player.Events.{DumpCard, MoveCard, Transit}
 import core.player.Player
 import core.shuffle.Shuffle
 import core.shuffle.Shuffle.Preset
@@ -21,27 +21,38 @@ object Application extends App {
     .addPlayer(Player(Player.Name("player-3")))
     .addPlayer(Player(Player.Name("player-4")))
 
+  val delimiter = () => println("=".repeat(100))
   EventBus.on {
     case SetupBegin(members) =>
-      println(s"start old-maid with $members")
+      delimiter()
+      println(s"start old-maid with ${members.map(_.name).mkString(", ")}")
+      delimiter()
 
     case Deal(aCard, to) =>
       println(s"deal $aCard to $to")
 
     case SetupFinish(members, alreadyFinished) =>
+      delimiter()
       println(s"setup finished. players are $members.")
 
       if (alreadyFinished.nonEmpty)
         println(s"but $alreadyFinished are already finished.")
 
+      delimiter()
+
     case MoveCard(from, to, aCard) =>
-      println(s"$aCard moved from $from to $to")
+      println(s"$to draw card $aCard from $from")
 
     case DumpCard(owner, aCard) =>
       println(s"$owner dumped $aCard from the hand")
 
+    case Transit(from, to) =>
+      println(s"${from.name} transited from ${from.currentPhase} to ${to.currentPhase}")
+
     case GameOver(_) =>
+      delimiter()
       println("game over!!!")
+      delimiter()
 
     case _ => nop()
   }

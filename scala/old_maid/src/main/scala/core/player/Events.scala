@@ -8,5 +8,7 @@ import core.player.Phase.{Drawer, Drawn}
 object Events {
   case class MoveCard(from: Drawn, to: Drawer, aCard: Card) extends Event
 
+  case class Transit(from: Phase, to: Phase) extends Event
+
   case class DumpCard(who: Player, aCard: Card) extends Event
 }
