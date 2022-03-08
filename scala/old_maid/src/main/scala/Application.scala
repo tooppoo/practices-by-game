@@ -3,8 +3,8 @@ package philomagi.practices_by_game.old_maid
 import core.card.Deck
 import core.game.{Dealer, OldMaid}
 import core.player.Player
-import core.util.Shuffle
-import core.util.Shuffle.Preset
+import core.shuffle.Shuffle
+import core.shuffle.Shuffle.Preset
 
 import scala.sys.exit
 import scala.util.Random

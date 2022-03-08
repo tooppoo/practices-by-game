@@ -1,7 +1,7 @@
 package philomagi.practices_by_game.old_maid
 package core.card
 
-import core.util.Shuffle
+import core.shuffle.Shuffle
 
 class Deck private (private val cards: Seq[Card]) {
   require(cards.nonEmpty)

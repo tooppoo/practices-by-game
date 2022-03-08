@@ -5,7 +5,7 @@ import core.card.Deck
 import core.game.OldMaid.Phase.Playable.{PlayersOrderByFinishedEarly, process}
 import core.game.OldMaid.Phase.Preparing.Exception.TooLessPlayersException
 import core.player.Phase.{Drawer, Drawn, Finish, GetReady, Preparing => PreparingPlayer}
-import core.util.Shuffle
+import core.shuffle.Shuffle
 
 import scala.annotation.tailrec
 

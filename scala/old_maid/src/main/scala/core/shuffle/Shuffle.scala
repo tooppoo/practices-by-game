@@ -1,5 +1,5 @@
 package philomagi.practices_by_game.old_maid
-package core.util
+package core.shuffle
 
 import scala.util.Random
 
