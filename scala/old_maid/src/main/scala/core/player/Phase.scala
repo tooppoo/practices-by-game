@@ -10,15 +10,15 @@ trait Phase { this: Player =>
 object Phase {
   trait Preparing extends Phase { this: Player =>
     def accept(aCard: Card): Preparing =
-      new Player(name, strategy, cardsInHand = cards.insert(aCard).toSeq) with Preparing
+      new Player(name, strategy, cards.insert(aCard).toSeq) with Preparing
 
     def getReady: Preparing.NextOfGetReady = if (cards.isEmpty) {
       Left(
-        new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.isEmpty)) with Finish
+        new Player(name, strategy, cards.toSeq.ensuring(_.isEmpty)) with Finish
       )
     } else {
       Right(
-        new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with GetReady
+        new Player(name, strategy, cards.toSeq.ensuring(_.nonEmpty)) with GetReady
       )
     }
   }
@@ -30,10 +30,10 @@ object Phase {
     require(cards.nonEmpty)
 
     def asDrawn: Drawn =
-      new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawn
+      new Player(name, strategy, cards.toSeq.ensuring(_.nonEmpty)) with Drawn
 
     def asDrawer: Drawer =
-      new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawer
+      new Player(name, strategy, cards.toSeq.ensuring(_.nonEmpty)) with Drawer
   }
 
   trait Drawn extends Phase with Behavior.CanGiveUp { this: Player =>
@@ -43,11 +43,11 @@ object Phase {
       val (aCard, rest) = cards.provide(candidate)
       val next = if (rest.isEmpty) {
         Left(
-          new Player(name, strategy, cardsInHand = rest.toSeq.ensuring(_.isEmpty)) with Finish
+          new Player(name, strategy, rest.toSeq.ensuring(_.isEmpty)) with Finish
         )
       } else {
         Right(
-          new Player(name, strategy, cardsInHand = rest.toSeq.ensuring(_.nonEmpty)) with Drawer
+          new Player(name, strategy, rest.toSeq.ensuring(_.nonEmpty)) with Drawer
         )
       }
 
@@ -56,7 +56,7 @@ object Phase {
 
     def candidates: Seq[cards.Candidate] = cards.candidates
 
-    def skip: Drawer = new Player(name, strategy, cardsInHand = cards.toSeq.ensuring(_.nonEmpty)) with Drawer
+    def skip: Drawer = new Player(name, strategy, cards.toSeq.ensuring(_.nonEmpty)) with Drawer
   }
   object Drawn {
     type NextOfDrawn = Either[Finish, Drawer]
@@ -72,11 +72,11 @@ object Phase {
       val nextCardsInHand = cards.insert(aCard)
       val nextOfDrawer = if (nextCardsInHand.isEmpty) {
         Left(
-          new Player(name, strategy, cardsInHand = nextCardsInHand.toSeq.ensuring(_.isEmpty)) with Finish
+          new Player(name, strategy, nextCardsInHand.toSeq.ensuring(_.isEmpty)) with Finish
         )
       } else {
         Right(
-          new Player(name, strategy, cardsInHand = nextCardsInHand.toSeq.ensuring(_.nonEmpty)) with Drawn
+          new Player(name, strategy, nextCardsInHand.toSeq.ensuring(_.nonEmpty)) with Drawn
         )
       }
 
