@@ -11,9 +11,7 @@ object Strategy {
     def selectCandidateFrom[C <: Player#CardsInHand#Candidate](candidates: Seq[C]): C = {
       require(candidates.nonEmpty)
 
-      val index = random.between(0, candidates.length)
-
-      candidates(index)
+      random.shuffle(candidates).head
     }
   }
 }
