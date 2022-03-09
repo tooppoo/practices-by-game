@@ -21,3 +21,15 @@ lazy val oldMaid = (project in file("./old_maid"))
       jig / jigPatternDomain := s".+\\.old_maid\\..+"
     )
   })
+
+lazy val jankenForCouple = (project in file("./janken-for-couple"))
+  .configure(prj => {
+    val conf = ProjectConfig.SubProject("janken_for_couple")
+    val jigConfig = JigConfig(prj)
+
+    prj.settings(
+      conf.toSettings,
+      jigConfig.defaultSettings,
+      jig / jigPatternDomain := s".+\\.janken_for_couple\\..+"
+    )
+  })
