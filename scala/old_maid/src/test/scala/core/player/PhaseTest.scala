@@ -162,6 +162,7 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
 
             drawerNext match {
               case Left(phase) => phase shouldBe a[Finish]
+              case _ => fail()
             }
           }
         }
@@ -188,6 +189,7 @@ class PhaseTest extends AnyFunSpec with TableDrivenPropertyChecks {
 
             drawerNext match {
               case Right(phase) => phase shouldBe a[Drawn]
+              case _ => fail()
             }
           }
         }

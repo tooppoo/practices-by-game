@@ -13,20 +13,23 @@ import scala.annotation.tailrec
 
 class OldMaid private[game](
                              private val dealer: Dealer,
+                             private val deck: Deck,
                              private val players: Seq[PreparingPlayer]
-                           )
+                           ) {
+  require(players.length <= deck.count)
+}
 
 object OldMaid {
-  def apply(dealer: Dealer) = new OldMaid(dealer, Seq.empty) with Phase.Preparing
+  def apply(dealer: Dealer, deck: Deck) = new OldMaid(dealer, deck, Seq.empty) with Phase.Preparing
 
   object Phase {
     trait Preparing {
       this: OldMaid =>
-      def addPlayer(p: PreparingPlayer): Preparing = new OldMaid(dealer, players :+ p) with Preparing
+      def addPlayer(p: PreparingPlayer): Preparing = new OldMaid(dealer, deck, players :+ p) with Preparing
 
       def setUp(): Either[Exception, Playable] = if (players.length >= 2) {
         Right(
-          new OldMaid(dealer, players) with Playable
+          new OldMaid(dealer, deck, players) with Playable
         )
       } else {
         Left(
@@ -45,7 +48,7 @@ object OldMaid {
       this: OldMaid =>
       require(players.length >= 2, "can not play old-maid with alone")
 
-      def play(deck: Deck = Deck.full)(implicit shuffle: Shuffle): PlayersOrderByFinishedEarly = {
+      def play()(implicit shuffle: Shuffle): PlayersOrderByFinishedEarly = {
         val shuffledDeck = deck.shuffle
         val shuffledPlayers = shuffle.shuffle(players)
 

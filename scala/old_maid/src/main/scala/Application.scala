@@ -15,7 +15,7 @@ import scala.util.Random
 object Application extends App {
   implicit val shuffle: Preset.RandomShuffle = Shuffle.Preset.RandomShuffle(new Random())
 
-  val game = OldMaid(Dealer.apply)
+  val game = OldMaid(Dealer.apply, Deck.full)
     .addPlayer(Player(Player.Name("player-1")))
     .addPlayer(Player(Player.Name("player-2")))
     .addPlayer(Player(Player.Name("player-3")))
@@ -62,8 +62,7 @@ object Application extends App {
       println(e.getMessage)
 
       exit(1)
-    case Right(g) =>
-      g.play(Deck.full)
+    case Right(g) => g.play()
   }
 
   println(s"players finished in order ${result.map(_.name).mkString(",")}")
