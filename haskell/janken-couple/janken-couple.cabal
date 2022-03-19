@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4f539ec509dab86a8e219c5e6e4051d381d4d412745629a904c329992f92b629
+-- hash: f7fcbbea3cd290a8ddc532f25f20c4da9876d0ffeb9ff079e29f2c1992c74e44
 
 name:           janken-couple
 version:        0.1.0.0
@@ -56,6 +56,7 @@ test-suite janken-couple-test
   main-is: Spec.hs
   other-modules:
       JankenCouple.HandSpec
+      JankenCouple.PlayerSpec
       Paths_janken_couple
   hs-source-dirs:
       test
