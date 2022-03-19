@@ -1,6 +1,17 @@
 module Main where
 
-import Lib
+import JankenCouple.Game
+import JankenCouple.Player
+import JankenCouple.Strategy
 
 main :: IO ()
-main = someFunc
+main = do
+  let p1 = player "player-1" "John Doe" OnlyStone
+  let p2 = player "player-2" "Una Nancy Owen" OnlyScissors
+
+  let (p1After, p2After) = game (p1, p2) 5
+
+  let r1 = (name p1After, winCount p1After)
+  let r2 = (name p2After, winCount p2After)
+
+  putStrLn $ show (r1, r2)

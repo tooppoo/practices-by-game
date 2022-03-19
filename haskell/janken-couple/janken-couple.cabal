@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f7fcbbea3cd290a8ddc532f25f20c4da9876d0ffeb9ff079e29f2c1992c74e44
+-- hash: 13ea1fa7e7137b5ab90d76cb54ba67f23a13b36205cf1ccb6853003794811932
 
 name:           janken-couple
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      JankenCouple.Game
       JankenCouple.Hand
       JankenCouple.Player
       JankenCouple.Strategy
