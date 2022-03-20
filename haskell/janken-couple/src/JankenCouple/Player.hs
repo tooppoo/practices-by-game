@@ -28,18 +28,18 @@ battleWith' p1 p2 Hand.Lose = (p1, (notifyWin' p2))
 battleWith' p1 p2 Hand.Draw = (p1, p2)
 
 selectHand' :: Player -> (Hand.Hand, Player)
-selectHand' (Player { id = i,
-  name = n,
-  winCount = w,
-  strategy = current }) = (select current, nextPl)
-    where
-      nextStr = next current
-      nextPl = Player i n (next current) w
+selectHand' p = ( select current,
+                  withStrategy' p (next current))
+  where
+    current = strategy p
 
 notifyWin' :: Player -> Player
-notifyWin' (Player
-  { id = i,
-    name = n,
-    strategy = s,
-    winCount = winCount }) = Player i n s (winCount + 1)
- 
+notifyWin' p = withWinCount' p ((winCount p) + 1)
+
+withWinCount' :: Player -> Int -> Player
+withWinCount'
+  (Player { id = i, name = n, strategy = s }) w = Player i n s w
+
+withStrategy' :: Player -> Strategy -> Player
+withStrategy'
+  (Player { id = i, name = n, winCount = w }) s = Player i n s w
