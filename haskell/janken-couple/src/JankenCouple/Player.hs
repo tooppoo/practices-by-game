@@ -30,4 +30,8 @@ selectHand' :: Player -> Hand.Hand
 selectHand' (Player { strategy = str }) = select str
 
 notifyWin' :: Player -> Player
-notifyWin' p = Player (id p) (name p) (strategy p) ((winCount p) + 1)
+notifyWin' (Player
+  { id = i,
+    name = n,
+    strategy = s,
+    winCount = winCount }) = Player i n s (winCount + 1)
