@@ -9,7 +9,10 @@ import Prelude hiding (id)
 import qualified JankenCouple.Hand as Hand
 import JankenCouple.Strategy
 
-data Player = Player { id :: String, name :: String, strategy :: Strategy, winCount :: Int }
+data Player = Player {  id :: String,
+                        name :: String,
+                        strategy :: Strategy,
+                        winCount :: Int }
   deriving (Eq, Show)
 
 player :: String -> String -> Strategy -> Player
