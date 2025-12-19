@@ -1,0 +1,173 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "ghc@latest": {
+      "last_modified": "2025-11-23T21:50:36Z",
+      "plugin_version": "0.0.2",
+      "resolved": "github:NixOS/nixpkgs/ee09932cedcef15aaf476f9343d1dea2cb77e261#ghc",
+      "source": "devbox-search",
+      "version": "9.10.3",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vbrn02rqpff4ihwx5hscp488m7iiwswv-ghc-9.10.3",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/f94migbwcy9a7bc5a9kn001cyj75d6qx-ghc-9.10.3-doc"
+            }
+          ],
+          "store_path": "/nix/store/vbrn02rqpff4ihwx5hscp488m7iiwswv-ghc-9.10.3"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xn71dl6q7mq7sibgh75lz5m3mqpa9hmm-ghc-9.10.3",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/f0n8iwgkyb4azyzwj82201cbkhy8yxdx-ghc-9.10.3-doc"
+            }
+          ],
+          "store_path": "/nix/store/xn71dl6q7mq7sibgh75lz5m3mqpa9hmm-ghc-9.10.3"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/p0ca0gzq5w7nvywli5p0394fw4901xar-ghc-9.10.3",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/lrh3d31dmzln8zmmrvj5a0nn64p8ff3n-ghc-9.10.3-doc"
+            }
+          ],
+          "store_path": "/nix/store/p0ca0gzq5w7nvywli5p0394fw4901xar-ghc-9.10.3"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6xdv0kj7ycq56l9sqip2hmxp237j78h4-ghc-9.10.3",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/fggv6nijg6kb8142jzpnhp343gp07sly-ghc-9.10.3-doc"
+            }
+          ],
+          "store_path": "/nix/store/6xdv0kj7ycq56l9sqip2hmxp237j78h4-ghc-9.10.3"
+        }
+      }
+    },
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2025-12-05T15:03:55Z",
+      "resolved": "github:NixOS/nixpkgs/a672be65651c80d3f592a89b3945466584a22069?lastModified=1764947035"
+    },
+    "haskell-language-server@latest": {
+      "last_modified": "2025-12-15T12:53:45Z",
+      "resolved": "github:NixOS/nixpkgs/ac9a217389ee622d4e1e727c4efcc9c4bc9089ba#haskell-language-server",
+      "source": "devbox-search",
+      "version": "2.12.0.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/5galwgdqkppkjwn8459mqzivx6fd1blv-haskell-language-server-2.12.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/5galwgdqkppkjwn8459mqzivx6fd1blv-haskell-language-server-2.12.0.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/w4h2aw3h8j1x8dn58p4k9qm9z4wvysxh-haskell-language-server-2.12.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/w4h2aw3h8j1x8dn58p4k9qm9z4wvysxh-haskell-language-server-2.12.0.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dyypjsbzy58l0pjjmrvg8731aqj4hywj-haskell-language-server-2.12.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/dyypjsbzy58l0pjjmrvg8731aqj4hywj-haskell-language-server-2.12.0.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6v5kfr9v29mccykkjmnszwn4h1bj1b6h-haskell-language-server-2.12.0.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/6v5kfr9v29mccykkjmnszwn4h1bj1b6h-haskell-language-server-2.12.0.0"
+        }
+      }
+    },
+    "ruby@3.0.1": {
+      "last_modified": "2021-07-05T19:22:21Z",
+      "plugin_version": "0.0.2",
+      "resolved": "github:NixOS/nixpkgs/3e0ce8c5d478d06b37a4faa7a4cc8642c6bb97de#ruby_3_0",
+      "source": "devbox-search",
+      "version": "3.0.1"
+    },
+    "scala@2.13.7": {
+      "last_modified": "2022-01-09T20:43:19Z",
+      "resolved": "github:NixOS/nixpkgs/8928525bd8b8cdc1235a92a89b72cbbe5bd8a00d#scala",
+      "source": "devbox-search",
+      "version": "2.13.7"
+    },
+    "stack@latest": {
+      "last_modified": "2025-11-23T21:50:36Z",
+      "resolved": "github:NixOS/nixpkgs/ee09932cedcef15aaf476f9343d1dea2cb77e261#stack",
+      "source": "devbox-search",
+      "version": "3.7.1",
+      "systems": {
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3i7zscx33jkg6v7f88b27n1wdxljmh22-stack-3.7.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/3i7zscx33jkg6v7f88b27n1wdxljmh22-stack-3.7.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/pa30xwla76zvf4mj37pc9fssdns0x1hz-stack-3.7.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/pa30xwla76zvf4mj37pc9fssdns0x1hz-stack-3.7.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/lanmxpzj7c8frmxg2jjrmdgzkip9kdfm-stack-3.7.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/lanmxpzj7c8frmxg2jjrmdgzkip9kdfm-stack-3.7.1"
+        }
+      }
+    }
+  }
+}
